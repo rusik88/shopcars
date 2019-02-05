@@ -22,12 +22,14 @@
                 @click="drawer = !drawer"
                 class="hidden-md-and-up"
             ></v-toolbar-side-icon>
-            <v-toolbar-title>ShopCars</v-toolbar-title>
+            <v-toolbar-title>
+                <router-link to="/" tag="span" class="pointer">ShopCars</router-link>
+            </v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-items class="hidden-sm-and-down">
                 <v-btn flat :to="link.url" v-for="link of links" :key="link.title">
                     <v-icon left>{{ link.icon }}</v-icon>
-                    {{ link.title }}
+                    {{ link.title }} 
                 </v-btn>
             </v-toolbar-items>
         </v-toolbar>
@@ -56,3 +58,9 @@
         }
     }
 </script>
+
+<style scoped>
+    .pointer {
+        cursor:pointer;
+    }
+</style>
