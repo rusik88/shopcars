@@ -5,7 +5,7 @@
                 <v-flex xs12>
                     <v-carousel>
                         <v-carousel-item
-                        v-for="add in adds"
+                        v-for="add in promoAdds"
                         :key="add.id"
                         :src="add.srcImage"
                         >
@@ -46,42 +46,17 @@
 </template>
 
 <script>
-    export default {
-        data() {
-            return {
-                adds: [
-                {
-                    title: 'First Add',
-                    description: 'Hello I am description',
-                    promo: false,
-                    id: 1,
-                    srcImage: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg'
-                },
-                {
-                    title: 'Second Add',
-                    description: 'Hello I am description',
-                    promo: true,
-                    id: 2,
-                    srcImage: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg'
-                },
-                {
-                    title: 'Third Add',
-                    description: 'Hello I am description',
-                    promo: true,
-                    id: 3,
-                    srcImage: 'https://cdn.vuetifyjs.com/images/carousel/bird.jpg'
-                },
-                {
-                    title: 'Fourth Add',
-                    description: 'Hello I am description',
-                    promo: true,
-                    id: 4,
-                    srcImage: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg'
-                }
-                ]
-            }
+export default {
+    computed: {
+        promoAdds() {
+            return this.$store.getters.promoAdds
+        },
+        adds() {
+            return this.$store.getters.adds
         }
+
     }
+}
 </script>
 
 <style scoped>

@@ -21,6 +21,7 @@ export default new Router({
         {
             path: '/add/:id',
             name: '',
+            props: true,
             component: Add
         },
         {
