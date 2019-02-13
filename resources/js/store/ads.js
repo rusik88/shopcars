@@ -1,6 +1,6 @@
 export default {
     state: {
-        adds: [
+        ads: [
             {
                 title: 'First Add',
                 description: 'Hello I am description',
@@ -31,24 +31,32 @@ export default {
             }
         ]
     },
-    mutations: {},
-    actions: {},
+    mutations: {
+        createAd(state, payload) {
+            state.ads.push(payload);
+        }
+    },
+    actions: {
+        createAd(e, payload) {
+            payload.id = parseInt(Math.random() * 1000000)
+            e.commit('createAd', payload);
+        }
+    },
     getters: {
-        adds(state) {
-            return state.adds;
+        ads(state) {
+            return state.ads;
         },
-        promoAdds(state) {
-            return state.adds.filter(add => {
-                return add.promo;
+        promoAds(state) {
+            return state.ads.filter(ad => {
+                return ad.promo;
             })
         },
-        myAdds(state) {
-            return state.adds;
+        myAds(state) {
+            return state.ads;
         },
-        addById(state) {
-            console.log(addId);
-            return addId => {
-                return state.adds.find(add => add.id === addId)
+        adById(state) {
+            return adId => {
+                return state.ads.find(ad => ad.id === +adId)
             }
         }
     }

@@ -7,7 +7,7 @@
                     <v-text-field 
                         v-model="title"
                         :rules="[v => !!v || 'Title is required']"
-                        label="Add Title" 
+                        label="Ad Title" 
                         required
                         name="title"
                         type="text" 
@@ -15,7 +15,7 @@
                     <v-textarea 
                         v-model="description" 
                         name="description"
-                        label="Add description"
+                        label="Ad description"
                         :rules="[v => !!v || 'Description is required']"
                         required
                         type="text"
@@ -47,7 +47,7 @@
                 <v-layout row>
                     <v-flex xs12>
                        <v-spacer></v-spacer> 
-                       <v-btn :disabled="!valid" class="success" @click="createAdd">Create Add</v-btn>
+                       <v-btn :disabled="!valid" class="success" @click="createAd">Create Add</v-btn>
                     </v-flex>
                 </v-layout>
             </v-flex> 
@@ -66,16 +66,19 @@
             }
         },
         methods: {
-            createAdd() {
+            createAd() {
                 if(this.$refs.form.validate()) {
                     //logic
-                    const add = {
+                    const ad = {
                         title: this.title,
                         description: this.description,
-                        promo: this.promo
+                        promo: this.promo,
+                        srcImage: "https://cdn-images-1.medium.com/max/1200/1*nq9cdMxtdhQ0ZGL8OuSCUQ.jpeg"
                     }
-                    console.log(add);
+
+                    this.$store.dispatch('createAd', ad);
                 }
+                
             }
         }
     }

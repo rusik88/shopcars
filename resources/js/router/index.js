@@ -2,12 +2,12 @@ import Vue from 'vue';
 import Router from 'vue-router';
 
 import Home from '../components/Home';
-import Add from '../components/Adds/Add';
-import AddList from '../components/Adds/AddList';
-import NewAdd from '../components/Adds/NewAdd';
+import Ad from '../components/Ads/Ad';
+import AdList from '../components/Ads/AdList';
+import AdNew from '../components/Ads/AdNew'; 
 import Orders from '../components/User/Orders';
-import Login from '../components/Auth//Login';
-import Register from '../components/Auth//Register';
+import Login from '../components/Auth/Login';
+import Register from '../components/Auth/Register';
 
 Vue.use(Router);
 
@@ -19,20 +19,20 @@ export default new Router({
             component: Home
         },
         {
-            path: '/add/:id',
-            name: '',
+            path: '/ad/:id',
+            name: '', 
             props: true,
-            component: Add
+            component: Ad
         },
         {
             path: '/list',
             name: 'list',
-            component: AddList
+            component: AdList
         },
         {
             path: '/new',
             name: 'new',
-            component: NewAdd
+            component: AdNew
         },
         {
             path: '/login',
@@ -50,5 +50,20 @@ export default new Router({
             component: Orders
         },
     ],
-    mode: 'history' 
+    mode: 'history',
+    scrollBehavior(to, from, savedPosition) {
+
+        if(savedPosition) {
+          return savedPOsition;
+        }
+    
+        if(to.hash) {
+          return { selector: to.hash }
+        }
+        
+        return {
+          x: 0,
+          y: 0 
+        }
+      }
 });

@@ -86,15 +86,15 @@
         },
         methods: {
             onSubmit() {
-                console.log(valid);
                 if(this.$refs.form.validate()) {
                     const user = {
+                        name: this.name,
                         email: this.email,
-                        password: this.password
+                        password: this.password,
+                        password_confirmation: this.confirmPassword
                     }
-
-                    console.log(user);
-                    console.log(this.$refs.form);
+                    
+                   this.$store.dispatch('userRegister', user);
                 }
             }
         }

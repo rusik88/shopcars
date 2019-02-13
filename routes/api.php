@@ -13,6 +13,11 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::get('/user', function (Request $request) {
+    return response()->json([
+        'name' => 'Abigail',
+        'state' => 'CA'
+    ]);
 });
+
+Route::post('/register', ['uses'=>'Api\RegisterController@create', 'as' => 'login', 'middleware' => ['guest']]); 

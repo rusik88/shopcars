@@ -3,14 +3,14 @@
         <v-layout row>
             <v-flex xs12>
                 <v-card>
-                    <v-card-media
-                        :src="'https://cdn.vuetifyjs.com/images/carousel/planet.jpg'"
+                    <v-img
+                        :src="ad.srcImage"
                         height="300px"
                     >
-                    </v-card-media>
+                    </v-img>
                     <v-card-text>
-                        <h1>Lorem</h1>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci, placeat!</p>
+                        <h1>{{ ad.title }}</h1>
+                        <p>{{ ad.description }}</p>
                     </v-card-text> 
                     <v-card-actions>
                         <v-spacer></v-spacer>
@@ -27,9 +27,9 @@
     export default {
         props: ['id'],
         computed: {
-            ads() {
+            ad() {
                 const id = this.id;
-                return this.$store.getters.addById(id)
+                return this.$store.getters.adById(id)
             }
         }
     }
