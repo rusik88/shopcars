@@ -2,3 +2,10 @@ a :hover {
   text-decoration: none;
 }
 
+.errorMessages {
+  color: red;
+  font-size: 12px;
+  text-indent: 33px;
+  margin-top: -10px;
+}
+

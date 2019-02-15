@@ -1,4 +1,5 @@
-import {HTTP} from '../app.js';
+import router from '../router/index';
+import { HTTP } from '../app.js';
 
 export default {
     state: { 
@@ -12,17 +13,18 @@ export default {
     mutations: {
         userRegisterS(state, payload) {
             HTTP.post('register', payload)
-                .then(resp => {
-                    console.log(payload, resp);
-                    state.user = payload; 
-                    
-                })
+                .then(resp => resp.data) 
+                .then(data => {
+                    if(data.status) {
+                        router.push({ path: '/login', query: { register: 'yes' } })
+                    }
+                });
             
         }
-    },
+    }, 
     actions: {
         userRegister({commit}, payload) {
-            commit('userRegisterS', payload);
+            commit('userRegisterS', payload); 
         }
     }
 }

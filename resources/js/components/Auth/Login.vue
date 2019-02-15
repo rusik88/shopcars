@@ -9,7 +9,8 @@
                         <v-toolbar dark color="primary">
                             <v-toolbar-title>Login form</v-toolbar-title>
                         </v-toolbar>
-                        <v-card-text>
+                        <v-card-text> 
+                            <v-alert class="mb-3" :value="registerStatus" type="success">You can authorization</v-alert>
                             <v-form v-model="valid" ref="form" validation>
                                 <v-text-field 
                                     v-model="email" 
@@ -49,6 +50,7 @@
                 email: "",
                 password: "",
                 valid: false,
+                registerStatus: false,
                 emailRules: [  
                     v => !!v || 'E-mail is required',
                     v => /.+@.+/.test(v) || 'E-mail must be valid'
@@ -57,6 +59,11 @@
                     v => !!v || 'Password is required',
                     v => v.length >= 6 || 'Password must be equal or more than 6 characters'           
                 ]
+            }
+        },
+        mounted() {
+            if(this.$route.query.register === 'yes') {
+                this.registerStatus = true;
             }
         },
         methods: {

@@ -18,6 +18,7 @@ Route::get('/user', function (Request $request) {
         'name' => 'Abigail',
         'state' => 'CA'
     ]);
-});
+}); 
 
-Route::post('/register', ['uses'=>'Api\RegisterController@create', 'as' => 'login', 'middleware' => ['guest']]); 
+Route::post('/register', ['uses'=>'Api\RegisterController@create', 'middleware' => ['guest']]); 
+Route::post('/register/email', ['uses'=>'Api\RegisterController@userEmail', 'middleware' => ['guest']]); 
