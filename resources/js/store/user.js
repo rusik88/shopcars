@@ -20,11 +20,18 @@ export default {
                     }
                 });
             
+        },
+        userAuthS(state, payload) {
+           HTTP.post('login', payload)
+            .then(resp => console.log(resp.data));
         }
     }, 
     actions: {
         userRegister({commit}, payload) {
             commit('userRegisterS', payload); 
+        },
+        userAuth({commit}, payload) {
+            commit('userAuthS', payload)
         }
     }
 }

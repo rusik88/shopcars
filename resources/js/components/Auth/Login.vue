@@ -73,9 +73,7 @@
                         email: this.email,
                         password: this.password
                     }
-
-                    console.log(user);
-                    console.log(this.$refs.form);
+                     this.$store.dispatch('userAuth', user); 
                 }
             }
         }

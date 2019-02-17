@@ -2112,8 +2112,7 @@ __webpack_require__.r(__webpack_exports__);
           email: this.email,
           password: this.password
         };
-        console.log(user);
-        console.log(this.$refs.form);
+        this.$store.dispatch('userAuth', user);
       }
     }
   }
@@ -80936,12 +80935,21 @@ __webpack_require__.r(__webpack_exports__);
           });
         }
       });
+    },
+    userAuthS: function userAuthS(state, payload) {
+      _app_js__WEBPACK_IMPORTED_MODULE_1__["HTTP"].post('login', payload).then(function (resp) {
+        return console.log(resp.data);
+      });
     }
   },
   actions: {
     userRegister: function userRegister(_ref, payload) {
       var commit = _ref.commit;
       commit('userRegisterS', payload);
+    },
+    userAuth: function userAuth(_ref2, payload) {
+      var commit = _ref2.commit;
+      commit('userAuthS', payload);
     }
   }
 });
@@ -80966,8 +80974,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! D:\OpenServerNew\domains\shopcars.os\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! D:\OpenServerNew\domains\shopcars.os\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! D:\OpenServer\domains\shopcars.os\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! D:\OpenServer\domains\shopcars.os\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
