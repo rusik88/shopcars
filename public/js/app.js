@@ -1808,6 +1808,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -1834,6 +1839,19 @@ __webpack_require__.r(__webpack_exports__);
         url: '/list'
       }]
     };
+  },
+  methods: {
+    closeError: function closeError() {
+      this.$store.dispatch('clearError');
+    }
+  },
+  computed: {
+    error: function error() {
+      return this.$store.getters.error;
+    },
+    isuserLoggedIn: function isuserLoggedIn() {
+      return this.$store.getters.isuserLoggedIn;
+    }
   }
 });
 
@@ -2115,6 +2133,14 @@ __webpack_require__.r(__webpack_exports__);
         this.$store.dispatch('userAuth', user);
       }
     }
+  },
+  computed: {
+    loading: function loading() {
+      return this.$store.getters.loading;
+    },
+    error: function error() {
+      return this.$store.getters.error;
+    }
   }
 });
 
@@ -2132,6 +2158,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuelidate/lib/validators */ "./node_modules/vuelidate/lib/validators/index.js");
 /* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _app_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../app.js */ "./resources/js/app.js");
+//
 //
 //
 //
@@ -2271,6 +2298,14 @@ __webpack_require__.r(__webpack_exports__);
         this.$v.$touch();
         this.$store.dispatch('userRegister', user);
       }
+    }
+  },
+  computed: {
+    loading: function loading() {
+      return this.$store.getters.loading;
+    },
+    error: function error() {
+      return this.$store.getters.error;
     }
   }
 });
@@ -38081,9 +38116,36 @@ var render = function() {
         1
       ),
       _vm._v(" "),
-      _c("v-footer")
+      _vm.error
+        ? [
+            _c(
+              "v-snackbar",
+              {
+                attrs: {
+                  "multi-line": true,
+                  timeout: 5000,
+                  value: true,
+                  color: "error"
+                },
+                on: { input: _vm.closeError }
+              },
+              [
+                _vm._v("\n          " + _vm._s(_vm.error) + "\n          "),
+                _c(
+                  "v-btn",
+                  {
+                    attrs: { flat: "", dark: "" },
+                    on: { click: _vm.closeError }
+                  },
+                  [_vm._v(" Close")]
+                )
+              ],
+              1
+            )
+          ]
+        : _vm._e()
     ],
-    1
+    2
   )
 }
 var staticRenderFns = []
@@ -38601,7 +38663,8 @@ var render = function() {
                                     "v-btn",
                                     {
                                       attrs: {
-                                        disabled: !_vm.valid,
+                                        loading: _vm.loading,
+                                        disabled: !_vm.valid || _vm.loading,
                                         color: "primary"
                                       },
                                       on: { click: _vm.onSubmit }
@@ -38696,6 +38759,15 @@ var render = function() {
                               _c(
                                 "v-card-text",
                                 [
+                                  _c(
+                                    "v-alert",
+                                    {
+                                      staticClass: "mb-3",
+                                      attrs: { value: _vm.error, type: "error" }
+                                    },
+                                    [_vm._v(_vm._s(_vm.error))]
+                                  ),
+                                  _vm._v(" "),
                                   _c(
                                     "v-form",
                                     {
@@ -38973,7 +39045,10 @@ var render = function() {
                                             "v-btn",
                                             {
                                               attrs: {
-                                                disabled: _vm.$v.$invalid,
+                                                loading: _vm.loading,
+                                                disabled:
+                                                  _vm.$v.$invalid ||
+                                                  _vm.loading,
                                                 type: "submit",
                                                 color: "primary"
                                               }
@@ -80108,12 +80183,13 @@ __webpack_require__.r(__webpack_exports__);
 /*!*****************************!*\
   !*** ./resources/js/app.js ***!
   \*****************************/
-/*! exports provided: HTTP */
+/*! exports provided: HTTP, HTTP_LOCAL */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HTTP", function() { return HTTP; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HTTP_LOCAL", function() { return HTTP_LOCAL; });
 /* harmony import */ var _App_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./App.vue */ "./resources/js/App.vue");
 /* harmony import */ var vuetify__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuetify */ "./node_modules/vuetify/dist/vuetify.js");
 /* harmony import */ var vuetify__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vuetify__WEBPACK_IMPORTED_MODULE_1__);
@@ -80142,6 +80218,12 @@ var HTTP = axios__WEBPACK_IMPORTED_MODULE_3___default.a.create({
   headers: {
     Accept: 'application/json',
     Authorization: "Bearer token"
+  }
+});
+var HTTP_LOCAL = axios__WEBPACK_IMPORTED_MODULE_3___default.a.create({
+  baseURL: 'http://shopcars.os/',
+  headers: {
+    Accept: 'application/json'
   }
 });
 var app = new Vue({
@@ -80871,6 +80953,57 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/store/common.js":
+/*!**************************************!*\
+  !*** ./resources/js/store/common.js ***!
+  \**************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  state: {
+    loading: false,
+    error: null
+  },
+  mutations: {
+    setLoading: function setLoading(state, payload) {
+      state.loading = payload;
+    },
+    setError: function setError(state, payload) {
+      state.error = payload;
+    },
+    clearError: function clearError(state) {
+      state.error = null;
+    }
+  },
+  actions: {
+    seLoading: function seLoading(_ref, payload) {
+      var commit = _ref.commit;
+      commit('setLoading', payload);
+    },
+    setError: function setError(_ref2, payload) {
+      var commit = _ref2.commit;
+      commit('setError', payload);
+    },
+    clearError: function clearError(_ref3) {
+      var commit = _ref3.commit;
+      commit('clearError');
+    }
+  },
+  getters: {
+    loading: function loading(state) {
+      return state.loading;
+    },
+    error: function error(state) {
+      return state.error;
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./resources/js/store/index.js":
 /*!*************************************!*\
   !*** ./resources/js/store/index.js ***!
@@ -80885,6 +81018,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 /* harmony import */ var _ads__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ads */ "./resources/js/store/ads.js");
 /* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./user */ "./resources/js/store/user.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./common */ "./resources/js/store/common.js");
+
 
 
 
@@ -80893,7 +81028,8 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__
 /* harmony default export */ __webpack_exports__["default"] = (new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
   modules: {
     adds: _ads__WEBPACK_IMPORTED_MODULE_2__["default"],
-    user: _user__WEBPACK_IMPORTED_MODULE_3__["default"]
+    user: _user__WEBPACK_IMPORTED_MODULE_3__["default"],
+    common: _common__WEBPACK_IMPORTED_MODULE_4__["default"]
   }
 }));
 
@@ -80912,6 +81048,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _app_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../app.js */ "./resources/js/app.js");
 
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   state: {
     user: null
@@ -80922,10 +81059,20 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   mutations: {
-    userRegisterS: function userRegisterS(state, payload) {
+    userAuthS: function userAuthS(state, payload) {
+      state.user = payload;
+    }
+  },
+  actions: {
+    userRegister: function userRegister(_ref, payload) {
+      var commit = _ref.commit;
+      commit('clearError');
+      commit('setLoading', true);
       _app_js__WEBPACK_IMPORTED_MODULE_1__["HTTP"].post('register', payload).then(function (resp) {
         return resp.data;
       }).then(function (data) {
+        commit('setLoading', false);
+
         if (data.status) {
           _router_index__WEBPACK_IMPORTED_MODULE_0__["default"].push({
             path: '/login',
@@ -80933,23 +81080,26 @@ __webpack_require__.r(__webpack_exports__);
               register: 'yes'
             }
           });
+        } else {
+          commit('setErrors', data.message);
         }
+      }).catch(function (error) {
+        commit('setLoading', false);
+        commit('setError', error.message);
       });
-    },
-    userAuthS: function userAuthS(state, payload) {
-      _app_js__WEBPACK_IMPORTED_MODULE_1__["HTTP"].post('login', payload).then(function (resp) {
-        return console.log(resp.data);
-      });
-    }
-  },
-  actions: {
-    userRegister: function userRegister(_ref, payload) {
-      var commit = _ref.commit;
-      commit('userRegisterS', payload);
     },
     userAuth: function userAuth(_ref2, payload) {
       var commit = _ref2.commit;
-      commit('userAuthS', payload);
+      commit('clearError');
+      commit('setLoading', true);
+      _app_js__WEBPACK_IMPORTED_MODULE_1__["HTTP_LOCAL"].post('login', payload).then(function (resp) {//code Auntificate by Api
+      }).catch(function (error) {
+        commit('setLoading', false);
+
+        if (error.response.status == 422 || error.response.status == 400) {
+          commit('setError', 'Password or login are incorected');
+        }
+      });
     }
   }
 });
@@ -80974,8 +81124,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! D:\OpenServer\domains\shopcars.os\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! D:\OpenServer\domains\shopcars.os\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! D:\OpenServerNew\domains\shopcars.os\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! D:\OpenServerNew\domains\shopcars.os\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

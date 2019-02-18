@@ -39,22 +39,40 @@
               <router-view></router-view>
           </v-container>
       </v-content>
-      <v-footer></v-footer>
+    <template v-if="error"> 
+        <v-snackbar  :multi-line="true" :timeout="5000" @input="closeError" :value="true" color="error">
+            {{ error }}
+            <v-btn flat dark @click="closeError"> Close</v-btn>
+        </v-snackbar>
+    </template>
   </v-app>
 </template>
 
 <script>
-    export default {
+    export default { 
         data() {
             return {
-                drawer: false,
+                drawer: false, 
                 links: [
                     {title: 'Login', icon: 'lock', url: '/login'},
                     {title: 'Registration', icon: 'face', url: '/register'},
                     {title: 'Orders', icon: 'bookmark_border', url: '/orders'},
                     {title: 'New ad', icon: 'note_add', url: '/new'},
-                    {title: 'My ads', icon: 'list', url: '/list'}
+                    {title: 'My ads', icon: 'list', url: '/list'} 
                 ]
+            }
+        },
+        methods: {
+            closeError() {
+                this.$store.dispatch('clearError'); 
+            }
+        },
+        computed: {
+            error() {
+                return this.$store.getters.error;
+            },
+            isuserLoggedIn() {
+                return this.$store.getters.isuserLoggedIn
             }
         }
     }

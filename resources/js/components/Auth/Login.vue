@@ -32,7 +32,7 @@
                         </v-card-text>
                         <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn :disabled="!valid"  @click="onSubmit" color="primary">Login</v-btn>
+                            <v-btn :loading = "loading" :disabled="!valid || loading"  @click="onSubmit" color="primary">Login</v-btn>
                         </v-card-actions>
                         </v-card>
                     </v-flex>
@@ -75,6 +75,14 @@
                     }
                      this.$store.dispatch('userAuth', user); 
                 }
+            }
+        },
+        computed: {
+            loading() {
+                return this.$store.getters.loading
+            },
+            error() {
+                return this.$store.getters.error
             }
         }
     }

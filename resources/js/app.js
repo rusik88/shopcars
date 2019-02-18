@@ -23,6 +23,13 @@ export const HTTP = Axios.create({
     }
 });
 
+export const HTTP_LOCAL = Axios.create({
+    baseURL: 'http://shopcars.os/',
+    headers: {
+        Accept: 'application/json'
+    }
+});
+
 const app = new Vue({
     el: '#app',
     data: {

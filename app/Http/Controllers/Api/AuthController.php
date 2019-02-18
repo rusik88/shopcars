@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+/*namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -26,4 +26,21 @@ class AuthController extends Controller
             }
         }
     }
+}*/
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
+
+class LoginController extends Controller
+{
+    use AuthenticatesUsers;
+
+    protected $redirectTo = '/';
+
+    public function __construct()
+    {
+        $this->middleware('guest')->except('logout');
+    } 
 }

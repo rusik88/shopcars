@@ -10,6 +10,7 @@
                             <v-toolbar-title>Registration</v-toolbar-title>
                         </v-toolbar>
                         <v-card-text>
+                             <v-alert class="mb-3" :value="error" type="error">{{ error }}</v-alert>
                             <v-form @submit.prevent="onSubmit"> 
                                 <div class="form_element">
                                     <v-text-field 
@@ -75,13 +76,13 @@
                                 </div>
                                 <v-card-actions>
                                     <v-spacer></v-spacer>
-                                    <v-btn :disabled="$v.$invalid" type="submit" color="primary">Create account</v-btn>
+                                    <v-btn :loading='loading' :disabled="$v.$invalid || loading" type="submit" color="primary">Create account</v-btn>
                                 </v-card-actions>
                             </v-form>
                         </v-card-text>
                         </v-card>
                     </v-flex>
-                    </v-layout>
+                    </v-layout> 
                 </v-container>
             </v-flex>
         </v-layout> 
@@ -125,7 +126,6 @@ export default {
             required,
             repeatPassword: sameAs('password')
         }
-
     },
     methods: {
         onSubmit() { 
@@ -138,7 +138,14 @@ export default {
                 this.$v.$touch();
                 this.$store.dispatch('userRegister', user);
             }
-            
+        }
+    },
+    computed: {
+        loading() {
+            return this.$store.getters.loading;
+        },
+        error() {
+            return this.$store.getters.error
         }
     }
 }
