@@ -9,8 +9,9 @@
                         <v-toolbar dark color="primary">
                             <v-toolbar-title>Login form</v-toolbar-title>
                         </v-toolbar>
-                        <v-card-text> 
+                        <v-card-text>  
                             <v-alert class="mb-3" :value="registerStatus" type="success">You can authorization</v-alert>
+                            <v-alert class="mb-3" :value="logoutStatus" type="success">You successfully logged out</v-alert>
                             <v-form v-model="valid" ref="form" validation>
                                 <v-text-field 
                                     v-model="email" 
@@ -51,6 +52,7 @@
                 password: "",
                 valid: false,
                 registerStatus: false,
+                logoutStatus: false,
                 emailRules: [  
                     v => !!v || 'E-mail is required',
                     v => /.+@.+/.test(v) || 'E-mail must be valid'
@@ -65,6 +67,9 @@
             if(this.$route.query.register === 'yes') {
                 this.registerStatus = true;
             }
+            if(this.$route.query.logout === 'yes') {
+                this.logoutStatus = true;
+            }
         },
         methods: {
             onSubmit() {
@@ -73,7 +78,7 @@
                         email: this.email,
                         password: this.password
                     }
-                     this.$store.dispatch('userAuth', user); 
+                    this.$store.dispatch('userAuth', user); 
                 }
             }
         },

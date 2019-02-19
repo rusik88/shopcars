@@ -28,9 +28,13 @@
             </v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-items class="hidden-sm-and-down">
-                <v-btn flat :to="link.url" v-for="link of links" :key="link.title">
+                <v-btn flat :to="link.url" v-for="link of filteredlink" :key="link.title">
                     <v-icon left>{{ link.icon }}</v-icon>
                     {{ link.title }} 
+                </v-btn>
+                <v-btn flat v-if="authStat" @click="logout" :loading="loading"> 
+                    <v-icon left>exit_to_app</v-icon>
+                    Logout
                 </v-btn>
             </v-toolbar-items>
         </v-toolbar>
@@ -49,22 +53,27 @@
 </template>
 
 <script>
+import { HTTP, HTTP_LOCAL } from './app.js';
+
     export default { 
         data() {
             return {
                 drawer: false, 
                 links: [
-                    {title: 'Login', icon: 'lock', url: '/login'},
-                    {title: 'Registration', icon: 'face', url: '/register'},
-                    {title: 'Orders', icon: 'bookmark_border', url: '/orders'},
-                    {title: 'New ad', icon: 'note_add', url: '/new'},
-                    {title: 'My ads', icon: 'list', url: '/list'} 
+                    {title: 'Login', icon: 'lock', url: '/login', auth: false},
+                    {title: 'Registration', icon: 'face', url: '/register', auth: false},
+                    {title: 'Orders', icon: 'bookmark_border', url: '/orders', auth: true},
+                    {title: 'New ad', icon: 'note_add', url: '/new', auth: true},
+                    {title: 'My ads', icon: 'list', url: '/list', auth: true}
                 ]
             }
         },
         methods: {
             closeError() {
                 this.$store.dispatch('clearError'); 
+            },
+            logout() {
+                this.$store.dispatch('userLogout');
             }
         },
         computed: {
@@ -73,7 +82,22 @@
             },
             isuserLoggedIn() {
                 return this.$store.getters.isuserLoggedIn
+            },
+            authStat() {
+                return this.$store.getters.authStat;
+            },
+            filteredlink() {
+                return this.links.filter(link => {
+                    return link.auth == this.authStat
+                });
+            },
+            loading() {
+                return this.$store.getters.loading
             }
+        },
+        created() {
+            this.$store.commit('setAuthStatus');
+           
         }
     }
 </script>

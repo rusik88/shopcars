@@ -19,8 +19,17 @@ export const HTTP = Axios.create({
     baseURL: 'http://shopcars.os/api/',
     headers: {
         Accept: 'application/json',
-        Authorization: "Bearer token"
     }
+});
+
+HTTP.interceptors.response.use(function (response) {
+    if(response.data.token_type) {
+        HTTP.defaults.headers.common['Authorization'] = response.data.token_type+" "+response.data.access_token;
+    } 
+    console.log(response);
+    return response;
+  }, function (error) {
+    return Promise.reject(error);
 });
 
 export const HTTP_LOCAL = Axios.create({

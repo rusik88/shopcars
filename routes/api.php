@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Laravel\Passport\Passport;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +14,10 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::post('/login', ['uses'=>'Api\AuthController@login', 'middleware' => ['guest']]); 
-Route::post('/register', ['uses'=>'Api\RegisterController@create', 'middleware' => ['guest']]); 
-Route::post('/register/email', ['uses'=>'Api\RegisterController@userEmail', 'middleware' => ['guest']]); 
+Passport::routes();
+
+Route::post('/logout', ['uses'=>'Api\UserController@logout', 'middleware' => ['auth:api']]); 
+
+
+Route::post('/register', ['uses'=>'Api\UserController@create', 'middleware' => ['guest']]); 
+Route::post('/register/email', ['uses'=>'Api\UserController@userEmail', 'middleware' => ['guest']]); 
