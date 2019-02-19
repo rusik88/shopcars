@@ -81048,14 +81048,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _app_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../app.js */ "./resources/js/app.js");
 
 
-
 /* harmony default export */ __webpack_exports__["default"] = ({
   state: {
-    user: null
+    user: null,
+    authStat: false
   },
   getters: {
     user: function user(state) {
       return state.user;
+    },
+    authStat: function authStat(state) {
+      return localStorage.getItem('token_auth') ? true : false;
     }
   },
   mutations: {
@@ -81092,7 +81095,21 @@ __webpack_require__.r(__webpack_exports__);
       var commit = _ref2.commit;
       commit('clearError');
       commit('setLoading', true);
-      _app_js__WEBPACK_IMPORTED_MODULE_1__["HTTP_LOCAL"].post('login', payload).then(function (resp) {//code Auntificate by Api
+      _app_js__WEBPACK_IMPORTED_MODULE_1__["HTTP_LOCAL"].post('login', payload).then(function (resp) {
+        var data = {
+          grant_type: "password",
+          client_id: 2,
+          client_secret: "5WdwIYOflfB0p3N4vJIiIuI4ItREQO5W3Avm6LRH",
+          username: payload.email,
+          password: payload.password
+        };
+        _app_js__WEBPACK_IMPORTED_MODULE_1__["HTTP_LOCAL"].post('oauth/token', data).then(function (resp_oauth) {
+          localStorage.setItem('token_auth', resp_oauth.data.access_token);
+          commit('setLoading', false);
+          _router_index__WEBPACK_IMPORTED_MODULE_0__["default"].push({
+            path: '/orders'
+          });
+        });
       }).catch(function (error) {
         commit('setLoading', false);
 
@@ -81124,8 +81141,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! D:\OpenServerNew\domains\shopcars.os\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! D:\OpenServerNew\domains\shopcars.os\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! D:\OpenServer\domains\shopcars.os\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! D:\OpenServer\domains\shopcars.os\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
