@@ -25,18 +25,10 @@ export const HTTP = Axios.create({
 HTTP.interceptors.response.use(function (response) {
     if(response.data.token_type) {
         HTTP.defaults.headers.common['Authorization'] = response.data.token_type+" "+response.data.access_token;
-    } 
-    console.log(response);
+    }
     return response;
   }, function (error) {
     return Promise.reject(error);
-});
-
-export const HTTP_LOCAL = Axios.create({
-    baseURL: 'http://shopcars.os/',
-    headers: {
-        Accept: 'application/json'
-    }
 });
 
 const app = new Vue({

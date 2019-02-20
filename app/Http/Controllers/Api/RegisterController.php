@@ -71,4 +71,10 @@ class RegisterController extends Controller
         return response()->json($statArray);
         
     }
+
+    public function logout(Request $request) {
+        auth()->user()->tokens->each(function($token) {
+            //$token->
+        });
+    }
 }

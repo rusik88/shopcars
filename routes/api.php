@@ -17,7 +17,5 @@ use Laravel\Passport\Passport;
 Passport::routes();
 
 Route::post('/logout', ['uses'=>'Api\UserController@logout', 'middleware' => ['auth:api']]); 
-
-
 Route::post('/register', ['uses'=>'Api\UserController@create', 'middleware' => ['guest']]); 
 Route::post('/register/email', ['uses'=>'Api\UserController@userEmail', 'middleware' => ['guest']]); 

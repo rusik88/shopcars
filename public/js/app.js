@@ -80250,13 +80250,12 @@ __webpack_require__.r(__webpack_exports__);
 /*!*****************************!*\
   !*** ./resources/js/app.js ***!
   \*****************************/
-/*! exports provided: HTTP, HTTP_LOCAL */
+/*! exports provided: HTTP */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HTTP", function() { return HTTP; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HTTP_LOCAL", function() { return HTTP_LOCAL; });
 /* harmony import */ var _App_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./App.vue */ "./resources/js/App.vue");
 /* harmony import */ var vuetify__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuetify */ "./node_modules/vuetify/dist/vuetify.js");
 /* harmony import */ var vuetify__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vuetify__WEBPACK_IMPORTED_MODULE_1__);
@@ -80291,16 +80290,9 @@ HTTP.interceptors.response.use(function (response) {
     HTTP.defaults.headers.common['Authorization'] = response.data.token_type + " " + response.data.access_token;
   }
 
-  console.log(response);
   return response;
 }, function (error) {
   return Promise.reject(error);
-});
-var HTTP_LOCAL = axios__WEBPACK_IMPORTED_MODULE_3___default.a.create({
-  baseURL: 'http://shopcars.os/',
-  headers: {
-    Accept: 'application/json'
-  }
 });
 var app = new Vue({
   el: '#app',
@@ -81177,33 +81169,18 @@ __webpack_require__.r(__webpack_exports__);
       var data = {
         grant_type: "password",
         client_id: 2,
-        client_secret: "aQw9scra7kqmkXmnyeMcOHJ3XGTD7wJ991ZD1vLV",
+        client_secret: "5WdwIYOflfB0p3N4vJIiIuI4ItREQO5W3Avm6LRH",
         username: payload.email,
         password: payload.password
       };
       _app_js__WEBPACK_IMPORTED_MODULE_1__["HTTP"].post('oauth/token', data).then(function (resp_oauth) {
         localStorage.setItem('token_auth', resp_oauth.data.access_token);
         commit('setAuthStatus');
-        commit('setLoading', false); //router.push({ path: '/orders' })
-      })
-      /*HTTP_LOCAL.post('login', payload)
-      .then(resp => {
-          const data = {
-              grant_type: "password",
-              client_id: 2,
-              client_secret: "aQw9scra7kqmkXmnyeMcOHJ3XGTD7wJ991ZD1vLV",
-              username: payload.email, 
-              password: payload.password
-          }
-          HTTP_LOCAL.post('oauth/token', data)
-          .then(resp_oauth => {
-              localStorage.setItem('token_auth', resp_oauth.data.access_token);
-              commit('setAuthStatus'); 
-              commit('setLoading', false);
-              router.push({ path: '/orders' })
-          })
-      })*/
-      .catch(function (error) {
+        commit('setLoading', false);
+        _router_index__WEBPACK_IMPORTED_MODULE_0__["default"].push({
+          path: '/orders'
+        });
+      }).catch(function (error) {
         commit('setLoading', false);
 
         if (error.response.status == 422 || error.response.status == 400) {
@@ -81214,32 +81191,17 @@ __webpack_require__.r(__webpack_exports__);
     userLogout: function userLogout(_ref3) {
       var commit = _ref3.commit;
       commit('setLoading', true);
-      var payload = {};
-      _app_js__WEBPACK_IMPORTED_MODULE_1__["HTTP"].post('logout', payload).then(function (resp_api) {
+      _app_js__WEBPACK_IMPORTED_MODULE_1__["HTTP"].post('logout', {}).then(function (resp_api) {
         commit('setLoading', false);
         localStorage.removeItem('token_auth');
         commit('setAuthStatus');
+        _router_index__WEBPACK_IMPORTED_MODULE_0__["default"].push({
+          path: '/login'
+        });
       }).catch(function (error) {
         commit('setLoading', false);
         commit('setError', 'Logout has errors API');
       });
-      /*HTTP_LOCAL.post('logout', payload)
-      .then(resp => { 
-          commit('setLoading', false);
-          //HTTP.post('logout', payload)
-          //.then(resp_api => {
-          //    commit('setLoading', false);
-          //    router.push({ path: '/login', query: {logout: 'yes'} });
-         // })
-          //.catch(error => {
-          //    commit('setLoading', false);
-         //    commit('setError', 'Logout has errors API');
-         // })
-      })
-      .catch(error => {
-          commit('setLoading', false);
-          commit('setError', 'Logout has errors Local');
-      })*/
     }
   }
 });
@@ -81264,8 +81226,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! D:\OpenServerNew\domains\shopcars.os\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! D:\OpenServerNew\domains\shopcars.os\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! D:\OpenServer\domains\shopcars.os\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! D:\OpenServer\domains\shopcars.os\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
