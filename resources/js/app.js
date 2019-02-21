@@ -19,25 +19,14 @@ export const HTTP = Axios.create({
     baseURL: 'http://shopcars.os/api/',
     headers: {
         Accept: 'application/json',
+        Authorization: 'Bearer '+localStorage.getItem('token_auth')
     }
-});
-
-HTTP.interceptors.response.use(function (response) {
-    if(response.data.token_type) {
-        HTTP.defaults.headers.common['Authorization'] = response.data.token_type+" "+response.data.access_token;
-    }
-    return response;
-  }, function (error) {
-    return Promise.reject(error);
 });
 
 const app = new Vue({
     el: '#app',
-    data: {
-        http: HTTP
-    },
+    data: {},
     render: h => h(App),
     router: Router,
-    store: Store,
-    http: HTTP 
+    store: Store
 });

@@ -80282,29 +80282,18 @@ Vue.use(vuelidate__WEBPACK_IMPORTED_MODULE_4___default.a);
 var HTTP = axios__WEBPACK_IMPORTED_MODULE_3___default.a.create({
   baseURL: 'http://shopcars.os/api/',
   headers: {
-    Accept: 'application/json'
+    Accept: 'application/json',
+    Authorization: 'Bearer ' + localStorage.getItem('token_auth')
   }
-});
-HTTP.interceptors.response.use(function (response) {
-  if (response.data.token_type) {
-    HTTP.defaults.headers.common['Authorization'] = response.data.token_type + " " + response.data.access_token;
-  }
-
-  return response;
-}, function (error) {
-  return Promise.reject(error);
 });
 var app = new Vue({
   el: '#app',
-  data: {
-    http: HTTP
-  },
+  data: {},
   render: function render(h) {
     return h(_App_vue__WEBPACK_IMPORTED_MODULE_0__["default"]);
   },
   router: _router_index__WEBPACK_IMPORTED_MODULE_5__["default"],
-  store: _store_index__WEBPACK_IMPORTED_MODULE_6__["default"],
-  http: HTTP
+  store: _store_index__WEBPACK_IMPORTED_MODULE_6__["default"]
 });
 
 /***/ }),
@@ -81119,7 +81108,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   state: {
     user: null,
-    authStat: false
+    authStat: false,
+    token: localStorage.getItem('token_auth')
   },
   getters: {
     user: function user(state) {
@@ -81127,6 +81117,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     authStat: function authStat(state) {
       return state.authStat;
+    },
+    getToken: function getToken(state) {
+      return state.token;
     }
   },
   mutations: {
@@ -81135,6 +81128,10 @@ __webpack_require__.r(__webpack_exports__);
     },
     setAuthStatus: function setAuthStatus(state) {
       state.authStat = localStorage.getItem('token_auth') ? true : false;
+    },
+    saveToken: function saveToken(state, token) {
+      localStorage.setItem('token_auth', token);
+      state.token = token;
     }
   },
   actions: {
@@ -81169,12 +81166,12 @@ __webpack_require__.r(__webpack_exports__);
       var data = {
         grant_type: "password",
         client_id: 2,
-        client_secret: "5WdwIYOflfB0p3N4vJIiIuI4ItREQO5W3Avm6LRH",
+        client_secret: "aQw9scra7kqmkXmnyeMcOHJ3XGTD7wJ991ZD1vLV",
         username: payload.email,
         password: payload.password
       };
       _app_js__WEBPACK_IMPORTED_MODULE_1__["HTTP"].post('oauth/token', data).then(function (resp_oauth) {
-        localStorage.setItem('token_auth', resp_oauth.data.access_token);
+        commit('saveToken', resp_oauth.data.access_token);
         commit('setAuthStatus');
         commit('setLoading', false);
         _router_index__WEBPACK_IMPORTED_MODULE_0__["default"].push({
@@ -81189,9 +81186,16 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     userLogout: function userLogout(_ref3) {
-      var commit = _ref3.commit;
+      var commit = _ref3.commit,
+          state = _ref3.state;
+      console.log(state);
       commit('setLoading', true);
-      _app_js__WEBPACK_IMPORTED_MODULE_1__["HTTP"].post('logout', {}).then(function (resp_api) {
+      var payload = {};
+      _app_js__WEBPACK_IMPORTED_MODULE_1__["HTTP"].post('logout', {}, {
+        headers: {
+          Authorization: "Bearer " + state.token
+        }
+      }).then(function (resp_api) {
         commit('setLoading', false);
         localStorage.removeItem('token_auth');
         commit('setAuthStatus');
@@ -81226,8 +81230,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! D:\OpenServer\domains\shopcars.os\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! D:\OpenServer\domains\shopcars.os\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! D:\OpenServerNew\domains\shopcars.os\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! D:\OpenServerNew\domains\shopcars.os\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

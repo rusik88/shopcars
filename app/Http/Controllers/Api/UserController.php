@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Hash; 
+use Illuminate\Support\Facades\Hash;  
 
 use App\User;
 
-class RegisterController extends Controller 
+class UserController extends Controller 
 {
     public function create(Request $request) {
         if($request->name && $request->email && $request->password) {
@@ -72,9 +72,15 @@ class RegisterController extends Controller
         
     }
 
-    public function logout(Request $request) {
-        auth()->user()->tokens->each(function($token) {
-            //$token->
+    public function logout() {
+        auth()->user()->tokens->each(function($token, $key) {
+            $token->delete();
         });
+
+        return response()->json([
+            "message" => "User was logout",
+            "status" => true,
+            "user" =>  auth()->user()
+        ]);
     }
 }

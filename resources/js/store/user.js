@@ -4,7 +4,8 @@ import { HTTP } from '../app.js';
 export default {
     state: { 
         user: null,
-        authStat: false
+        authStat: false,
+        token: localStorage.getItem('token_auth')
     },
     getters: {
         user(state) {
@@ -12,6 +13,9 @@ export default {
         },
         authStat(state) {
             return state.authStat;
+        },
+        getToken(state) {
+            return state.token;
         }
     },
     mutations: {
@@ -20,7 +24,11 @@ export default {
         },
         setAuthStatus(state) {
             state.authStat = localStorage.getItem('token_auth') ? true : false;
-        }
+        },
+        saveToken(state, token) {
+            localStorage.setItem('token_auth', token);
+            state.token = token; 
+        } 
     }, 
     actions: {
         userRegister({commit}, payload) {
@@ -40,24 +48,24 @@ export default {
             })
             .catch(error => {
                 commit('setLoading', false);
-                commit('setError', error.message);
+                commit('setError', error.message); 
             });
         },
         userAuth({commit}, payload) {
 
             commit('clearError');
-            commit('setLoading', true);
+            commit('setLoading', true); 
 
             const data = {
                 grant_type: "password",
                 client_id: 2,
-                client_secret: "5WdwIYOflfB0p3N4vJIiIuI4ItREQO5W3Avm6LRH",
+                client_secret: "aQw9scra7kqmkXmnyeMcOHJ3XGTD7wJ991ZD1vLV",
                 username: payload.email, 
                 password: payload.password
             }
             HTTP.post('oauth/token', data)
             .then(resp_oauth => {
-                localStorage.setItem('token_auth', resp_oauth.data.access_token);
+                commit('saveToken', resp_oauth.data.access_token);
                 commit('setAuthStatus'); 
                 commit('setLoading', false);
                 router.push({ path: '/orders' })
@@ -70,10 +78,13 @@ export default {
                 
             })
         },
-        userLogout({commit}) {
+        userLogout({commit, state}) {
+            console.log(state);
             commit('setLoading', true);
-            HTTP.post('logout', {})
-                .then(resp_api => {
+            const payload = {};
+            HTTP.post('logout', {}, {
+                headers: { Authorization: "Bearer "+state.token } 
+            }).then(resp_api => {
                     commit('setLoading', false);
                     localStorage.removeItem('token_auth');
                     commit('setAuthStatus');
@@ -85,4 +96,4 @@ export default {
             })
         } 
     }
-}
+} 

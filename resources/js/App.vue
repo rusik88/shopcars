@@ -97,7 +97,7 @@ import { HTTP, HTTP_LOCAL } from './app.js';
         },
         created() {
             this.$store.commit('setAuthStatus');
-           
+          
         }
     }
 </script>
