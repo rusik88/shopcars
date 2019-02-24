@@ -1,11 +1,12 @@
 import router from '../router/index';
-import { HTTP } from '../app.js';
+import Vue from 'vue';
+import { HTTP } from '../http.js';
 
 export default {
     state: { 
         user: null,
         authStat: false,
-        token: localStorage.getItem('token_auth')
+        token: localStorage.getItem('token_auth'),
     },
     getters: {
         user(state) {
@@ -32,7 +33,7 @@ export default {
     }, 
     actions: {
         userRegister({commit}, payload) {
-            commit('clearError');
+            commit('clearError'); 
             commit('setLoading', true);
 
             HTTP.post('register', payload)
@@ -59,7 +60,7 @@ export default {
             const data = {
                 grant_type: "password",
                 client_id: 2,
-                client_secret: "aQw9scra7kqmkXmnyeMcOHJ3XGTD7wJ991ZD1vLV",
+                client_secret: "5WdwIYOflfB0p3N4vJIiIuI4ItREQO5W3Avm6LRH",
                 username: payload.email, 
                 password: payload.password
             }
@@ -79,12 +80,9 @@ export default {
             })
         },
         userLogout({commit, state}) {
-            console.log(state);
             commit('setLoading', true);
             const payload = {};
-            HTTP.post('logout', {}, {
-                headers: { Authorization: "Bearer "+state.token } 
-            }).then(resp_api => {
+            HTTP.post('logout', {}).then(resp_api => {
                     commit('setLoading', false);
                     localStorage.removeItem('token_auth');
                     commit('setAuthStatus');

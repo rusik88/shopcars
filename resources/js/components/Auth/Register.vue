@@ -92,7 +92,7 @@
 <script>
 
 import { required, email, minLength, sameAs } from 'vuelidate/lib/validators';
-import { HTTP } from '../../app.js';
+//import { HTTP } from '../../app.js';
 
 export default {
     data() {
@@ -110,11 +110,16 @@ export default {
             checkEmail(newEmail) {
                 if(newEmail === '') return true;
                 return new Promise((resolve, reject) => {
-                    HTTP.post('register/email', {
+                    this.$http.post('register/email', {
                         email: newEmail
                     }).then(resp => { 
                         resolve(!resp.data.status);
                     });
+                    /*HTTP.post('register/email', {
+                        email: newEmail
+                    }).then(resp => { 
+                        resolve(!resp.data.status);
+                    });*/
                 })
             }
         },

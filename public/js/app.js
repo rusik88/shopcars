@@ -2193,7 +2193,6 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuelidate/lib/validators */ "./node_modules/vuelidate/lib/validators/index.js");
 /* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _app_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../app.js */ "./resources/js/app.js");
 //
 //
 //
@@ -2285,7 +2284,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-
+ //import { HTTP } from '../../app.js';
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -2304,13 +2303,21 @@ __webpack_require__.r(__webpack_exports__);
       required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"],
       email: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["email"],
       checkEmail: function checkEmail(newEmail) {
+        var _this = this;
+
         if (newEmail === '') return true;
         return new Promise(function (resolve, reject) {
-          _app_js__WEBPACK_IMPORTED_MODULE_1__["HTTP"].post('register/email', {
+          _this.$http.post('register/email', {
             email: newEmail
           }).then(function (resp) {
             resolve(!resp.data.status);
           });
+          /*HTTP.post('register/email', {
+              email: newEmail
+          }).then(resp => { 
+              resolve(!resp.data.status);
+          });*/
+
         });
       }
     },
@@ -38027,6 +38034,19 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
                          (this && this.clearImmediate);
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
+
+/***/ }),
+
+/***/ "./node_modules/vue-axios/dist/vue-axios.min.js":
+/*!******************************************************!*\
+  !*** ./node_modules/vue-axios/dist/vue-axios.min.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var _typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(o){return typeof o}:function(o){return o&&"function"==typeof Symbol&&o.constructor===Symbol&&o!==Symbol.prototype?"symbol":typeof o};!function(){function o(e,t){if(!o.installed){if(o.installed=!0,!t)return void console.error("You have to install axios");e.axios=t,Object.defineProperties(e.prototype,{axios:{get:function(){return t}},$http:{get:function(){return t}}})}}"object"==( false?undefined:_typeof(exports))?module.exports=o: true?!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function(){return o}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)):undefined}();
 
 /***/ }),
 
@@ -80250,12 +80270,11 @@ __webpack_require__.r(__webpack_exports__);
 /*!*****************************!*\
   !*** ./resources/js/app.js ***!
   \*****************************/
-/*! exports provided: HTTP */
+/*! no exports provided */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HTTP", function() { return HTTP; });
 /* harmony import */ var _App_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./App.vue */ "./resources/js/App.vue");
 /* harmony import */ var vuetify__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuetify */ "./node_modules/vuetify/dist/vuetify.js");
 /* harmony import */ var vuetify__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vuetify__WEBPACK_IMPORTED_MODULE_1__);
@@ -80263,10 +80282,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuetify_dist_vuetify_min_css__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vuetify_dist_vuetify_min_css__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var vuelidate__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vuelidate */ "./node_modules/vuelidate/lib/index.js");
-/* harmony import */ var vuelidate__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(vuelidate__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _router_index__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./router/index */ "./resources/js/router/index.js");
-/* harmony import */ var _store_index__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./store/index */ "./resources/js/store/index.js");
+/* harmony import */ var vue_axios__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vue-axios */ "./node_modules/vue-axios/dist/vue-axios.min.js");
+/* harmony import */ var vue_axios__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(vue_axios__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var vuelidate__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuelidate */ "./node_modules/vuelidate/lib/index.js");
+/* harmony import */ var vuelidate__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(vuelidate__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _http__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./http */ "./resources/js/http.js");
+/* harmony import */ var _router_index__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./router/index */ "./resources/js/router/index.js");
+/* harmony import */ var _store_index__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./store/index */ "./resources/js/store/index.js");
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
@@ -80277,23 +80299,27 @@ window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.
 
 
 
+
+
+Vue.use(vue_axios__WEBPACK_IMPORTED_MODULE_4___default.a, _http__WEBPACK_IMPORTED_MODULE_6__["HTTP"]);
 Vue.use(vuetify__WEBPACK_IMPORTED_MODULE_1___default.a);
-Vue.use(vuelidate__WEBPACK_IMPORTED_MODULE_4___default.a);
-var HTTP = axios__WEBPACK_IMPORTED_MODULE_3___default.a.create({
-  baseURL: 'http://shopcars.os/api/',
-  headers: {
-    Accept: 'application/json',
-    Authorization: 'Bearer ' + localStorage.getItem('token_auth')
-  }
-});
+Vue.use(vuelidate__WEBPACK_IMPORTED_MODULE_5___default.a);
+/*export const HTTP = Axios.create({
+    baseURL: 'http://shopcars.os/api/',
+    headers: {
+        Accept: 'application/json',
+        Authorization: 'Bearer '+localStorage.getItem('token_auth')
+    }
+});*/
+
 var app = new Vue({
   el: '#app',
   data: {},
   render: function render(h) {
     return h(_App_vue__WEBPACK_IMPORTED_MODULE_0__["default"]);
   },
-  router: _router_index__WEBPACK_IMPORTED_MODULE_5__["default"],
-  store: _store_index__WEBPACK_IMPORTED_MODULE_6__["default"]
+  router: _router_index__WEBPACK_IMPORTED_MODULE_7__["default"],
+  store: _store_index__WEBPACK_IMPORTED_MODULE_8__["default"]
 });
 
 /***/ }),
@@ -80857,6 +80883,58 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/http.js":
+/*!******************************!*\
+  !*** ./resources/js/http.js ***!
+  \******************************/
+/*! exports provided: HTTP */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HTTP", function() { return HTTP; });
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _store_index__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./store/index */ "./resources/js/store/index.js");
+
+
+var HTTP = axios__WEBPACK_IMPORTED_MODULE_0___default.a.create({
+  baseURL: 'http://shopcars.os/api/',
+  headers: {
+    Accept: 'application/json',
+    Authorization: 'Bearer ' + localStorage.getItem('token_auth')
+  }
+});
+HTTP.interceptors.request.use(function (config) {
+  if (localStorage.getItem('token_auth')) {
+    config.headers['Authorization'] = "Bearer " + localStorage.getItem('token_auth');
+  }
+
+  return config;
+}, function (error) {
+  return Promise.reject(error);
+});
+HTTP.interceptors.response.use(function (response) {
+  return response;
+}, function (error) {
+  if (error.response.status == 401) {
+    if (error.response.data.message) {
+      _store_index__WEBPACK_IMPORTED_MODULE_1__["default"].dispatch('clearError');
+      _store_index__WEBPACK_IMPORTED_MODULE_1__["default"].dispatch('setError', error.response.data.message);
+    } else {
+      _store_index__WEBPACK_IMPORTED_MODULE_1__["default"].dispatch('clearError');
+      _store_index__WEBPACK_IMPORTED_MODULE_1__["default"].dispatch('setError', error.response);
+    }
+  } else {
+    _store_index__WEBPACK_IMPORTED_MODULE_1__["default"].dispatch('clearError');
+    _store_index__WEBPACK_IMPORTED_MODULE_1__["default"].dispatch('setError', error.response.statusText);
+  }
+
+  return Promise.reject(error);
+});
+
+/***/ }),
+
 /***/ "./resources/js/router/index.js":
 /*!**************************************!*\
   !*** ./resources/js/router/index.js ***!
@@ -81102,7 +81180,10 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _router_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../router/index */ "./resources/js/router/index.js");
-/* harmony import */ var _app_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../app.js */ "./resources/js/app.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _http_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../http.js */ "./resources/js/http.js");
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -81139,7 +81220,7 @@ __webpack_require__.r(__webpack_exports__);
       var commit = _ref.commit;
       commit('clearError');
       commit('setLoading', true);
-      _app_js__WEBPACK_IMPORTED_MODULE_1__["HTTP"].post('register', payload).then(function (resp) {
+      _http_js__WEBPACK_IMPORTED_MODULE_2__["HTTP"].post('register', payload).then(function (resp) {
         return resp.data;
       }).then(function (data) {
         commit('setLoading', false);
@@ -81166,11 +81247,11 @@ __webpack_require__.r(__webpack_exports__);
       var data = {
         grant_type: "password",
         client_id: 2,
-        client_secret: "aQw9scra7kqmkXmnyeMcOHJ3XGTD7wJ991ZD1vLV",
+        client_secret: "5WdwIYOflfB0p3N4vJIiIuI4ItREQO5W3Avm6LRH",
         username: payload.email,
         password: payload.password
       };
-      _app_js__WEBPACK_IMPORTED_MODULE_1__["HTTP"].post('oauth/token', data).then(function (resp_oauth) {
+      _http_js__WEBPACK_IMPORTED_MODULE_2__["HTTP"].post('oauth/token', data).then(function (resp_oauth) {
         commit('saveToken', resp_oauth.data.access_token);
         commit('setAuthStatus');
         commit('setLoading', false);
@@ -81188,14 +81269,9 @@ __webpack_require__.r(__webpack_exports__);
     userLogout: function userLogout(_ref3) {
       var commit = _ref3.commit,
           state = _ref3.state;
-      console.log(state);
       commit('setLoading', true);
       var payload = {};
-      _app_js__WEBPACK_IMPORTED_MODULE_1__["HTTP"].post('logout', {}, {
-        headers: {
-          Authorization: "Bearer " + state.token
-        }
-      }).then(function (resp_api) {
+      _http_js__WEBPACK_IMPORTED_MODULE_2__["HTTP"].post('logout', {}).then(function (resp_api) {
         commit('setLoading', false);
         localStorage.removeItem('token_auth');
         commit('setAuthStatus');
@@ -81230,8 +81306,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! D:\OpenServerNew\domains\shopcars.os\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! D:\OpenServerNew\domains\shopcars.os\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! D:\OpenServer\domains\shopcars.os\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! D:\OpenServer\domains\shopcars.os\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
