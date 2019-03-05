@@ -49,6 +49,7 @@
             <v-btn flat dark @click="closeError"> Close</v-btn>
         </v-snackbar>
     </template>
+    {{ authStat }}
   </v-app>
 </template>
 
@@ -96,8 +97,11 @@ import { HTTP, HTTP_LOCAL } from './app.js';
             }
         },
         created() {
-            this.$store.commit('setAuthStatus');
-          
+            if(this.$store.getters.getToken) {
+               this.$store.dispatch('init');  
+            }
+
+            this.$store.dispatch('fetchAds');
         }
     }
 </script>

@@ -20,14 +20,18 @@ use Laravel\Passport\Passport;
 
 Passport::routes(); 
 
-Route::get('users', function () {
-    return response()->json([
-        "message" => "User was logout",
-        "status" => true,
-        "user" =>  User::all()
-    ]);
-})->middleware('auth:api');
+Route::get('/check-token', ['uses'=>'Api\UserController@changeToken', 'middleware' => ['auth:api']]); 
 
 Route::post('/logout', ['uses'=>'Api\UserController@logout', 'middleware' => ['auth:api']]); 
 Route::post('/register', ['uses'=>'Api\UserController@create', 'middleware' => ['guest']]); 
 Route::post('/register/email', ['uses'=>'Api\UserController@userEmail', 'middleware' => ['guest']]); 
+
+
+Route::group(['prefix'=>'ad'], function(){
+    Route::get('', ['uses'=>'Api\AdsController@all']);
+    Route::get('{id}', ['uses'=>'Api\AdsController@one']); 
+    Route::post('create', ['uses'=>'Api\AdsController@create', 'middleware' => ['auth:api']]); 
+    Route::post('update/{id}', ['uses'=>'Api\AdsController@update', 'middleware' => ['auth:api']]);
+    Route::delete('delete/{id}', ['uses'=>'Api\AdsController@delete', 'middleware' => ['auth:api']]);  
+});
+

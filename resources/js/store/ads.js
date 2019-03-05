@@ -1,50 +1,54 @@
+import { HTTP } from '../http.js';
+import router from '../router/index';
+
 export default {
-    state: {
-        ads: [
-            {
-                title: 'First Add',
-                description: 'Hello I am description',
-                promo: false,
-                id: 1,
-                srcImage: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg'
-            },
-            {
-                title: 'Second Add',
-                description: 'Hello I am description',
-                promo: false,
-                id: 2,
-                srcImage: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg'
-            },
-            {
-                title: 'Third Add',
-                description: 'Hello I am description',
-                promo: true,
-                id: 3,
-                srcImage: 'https://cdn.vuetifyjs.com/images/carousel/bird.jpg'
-            },
-            {
-                title: 'Fourth Add',
-                description: 'Hello I am description',
-                promo: true,
-                id: 4,
-                srcImage: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg'
-            }
-        ]
+    state: { 
+        ads: []
     },
     mutations: {
         createAd(state, payload) {
-            state.ads.push(payload);
+            state.ads.push(payload); 
+        },
+        setAds(state, payload) {
+            state.ads = payload;
+        },
+        clearAds(state) {
+            state.ads = [];
         }
     },
     actions: {
-        createAd(e, payload) {
-            payload.id = parseInt(Math.random() * 1000000)
-            e.commit('createAd', payload);
+        createAd({commit}, payload) {
+
+            commit('clearError');
+            commit('setLoading', true); 
+
+            HTTP.post('ad/create', payload) 
+            .then(resp => { 
+                commit('setLoading', false);
+                commit('createAd', resp.data.ad);
+                router.push('/list');
+            })
+            .catch(error => {
+                commit('setError', error.message);
+                commit('setLoading', false); 
+            }) 
+        },
+        fetchAds({commit}) {
+            commit('clearError');
+            commit('setLoading', true);
+            HTTP.get('ad')
+            .then(resp => {
+                commit('setAds', resp.data.ads);
+                commit('setLoading', false); 
+            })
+            .catch(error => {
+                commit('setLoading', false);
+            })
         }
     },
-    getters: {
+    getters: { 
         ads(state) {
-            return state.ads;
+            return state.ads; 
         },
         promoAds(state) {
             return state.ads.filter(ad => {

@@ -1,11 +1,10 @@
 import router from '../router/index';
-import Vue from 'vue';
 import { HTTP } from '../http.js';
 
 export default {
     state: { 
         user: null,
-        authStat: false,
+        authStat: localStorage.getItem('token_auth') ? true : false,
         token: localStorage.getItem('token_auth'),
     },
     getters: {
@@ -19,21 +18,28 @@ export default {
             return state.token;
         }
     },
-    mutations: {
+    mutations: { 
         userAuthS(state, payload) {
             state.user = payload;
         },
-        setAuthStatus(state) {
+        setAuthStatus(state) { 
             state.authStat = localStorage.getItem('token_auth') ? true : false;
         },
         saveToken(state, token) {
             localStorage.setItem('token_auth', token);
-            state.token = token; 
-        } 
+            state.token = token;  
+        },
+        clearToken(state) {
+            state.token = null; 
+            state.authStat = false;
+            state.user = null;
+            localStorage.removeItem('token_auth');
+            router.push({ path: '/login?loginError=yes' }); 
+        }
     }, 
     actions: {
         userRegister({commit}, payload) {
-            commit('clearError'); 
+            commit('clearError');
             commit('setLoading', true);
 
             HTTP.post('register', payload)
@@ -52,7 +58,7 @@ export default {
                 commit('setError', error.message); 
             });
         },
-        userAuth({commit}, payload) {
+        userAuth({commit, dispatch}, payload) {
 
             commit('clearError');
             commit('setLoading', true); 
@@ -60,7 +66,7 @@ export default {
             const data = {
                 grant_type: "password",
                 client_id: 2,
-                client_secret: "5WdwIYOflfB0p3N4vJIiIuI4ItREQO5W3Avm6LRH",
+                client_secret: "aQw9scra7kqmkXmnyeMcOHJ3XGTD7wJ991ZD1vLV",
                 username: payload.email, 
                 password: payload.password
             }
@@ -68,7 +74,8 @@ export default {
             .then(resp_oauth => {
                 commit('saveToken', resp_oauth.data.access_token);
                 commit('setAuthStatus'); 
-                commit('setLoading', false);
+                commit('setLoading', false); 
+                dispatch('init');  
                 router.push({ path: '/orders' })
             })
             .catch(error => {
@@ -79,19 +86,19 @@ export default {
                 
             })
         },
-        userLogout({commit, state}) {
+        userLogout({commit, dispatch, state}) {
             commit('setLoading', true);
             const payload = {};
             HTTP.post('logout', {}).then(resp_api => {
-                    commit('setLoading', false);
-                    localStorage.removeItem('token_auth');
-                    commit('setAuthStatus');
+                    commit('setLoading', false); 
+                    dispatch('disconect');
                     router.push({ path: '/login' })
                 })
                 .catch(error => {
                    commit('setLoading', false);
                    commit('setError', 'Logout has errors API');
             })
-        } 
+        },
+         
     }
 } 

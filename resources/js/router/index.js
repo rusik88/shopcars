@@ -1,6 +1,8 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
+import AuthGuard from '../auth-quard';
+
 import Home from '../components/Home';
 import Ad from '../components/Ads/Ad';
 import AdList from '../components/Ads/AdList';
@@ -27,12 +29,14 @@ export default new Router({
         {
             path: '/list',
             name: 'list',
-            component: AdList
+            component: AdList,
+            beforeEnter: AuthGuard
         },
         {
             path: '/new',
             name: 'new',
-            component: AdNew
+            component: AdNew,
+            beforeEnter: AuthGuard
         },
         {
             path: '/login',
@@ -47,14 +51,15 @@ export default new Router({
         {
             path: '/orders',
             name: 'orders',
-            component: Orders
+            component: Orders,
+            beforeEnter: AuthGuard
         },
     ],
     mode: 'history',
     scrollBehavior(to, from, savedPosition) {
 
         if(savedPosition) {
-          return savedPOsition;
+          return savedPosition;
         }
     
         if(to.hash) {
@@ -64,6 +69,6 @@ export default new Router({
         return {
           x: 0,
           y: 0 
-        }
+        } 
       }
 });

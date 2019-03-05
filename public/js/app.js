@@ -1818,6 +1818,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -1881,7 +1882,11 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   created: function created() {
-    this.$store.commit('setAuthStatus');
+    if (this.$store.getters.getToken) {
+      this.$store.dispatch('init');
+    }
+
+    this.$store.dispatch('fetchAds');
   }
 });
 
@@ -2054,22 +2059,34 @@ __webpack_require__.r(__webpack_exports__);
       title: '',
       description: '',
       promo: false,
-      valid: false
+      valid: false //loading: false
+
     };
+  },
+  computed: {
+    user: function user() {
+      return this.$store.getters.user;
+    },
+    loading: function loading() {
+      return this.$store.getters.loading;
+    }
   },
   methods: {
     createAd: function createAd() {
       if (this.$refs.form.validate()) {
-        //logic
         var ad = {
           title: this.title,
+          user_id: this.user.id,
           description: this.description,
           promo: this.promo,
-          srcImage: "https://cdn-images-1.medium.com/max/1200/1*nq9cdMxtdhQ0ZGL8OuSCUQ.jpeg"
+          image: "https://cdn-images-1.medium.com/max/1200/1*nq9cdMxtdhQ0ZGL8OuSCUQ.jpeg"
         };
         this.$store.dispatch('createAd', ad);
       }
     }
+  },
+  created: function created() {
+    console.log(this.loading);
   }
 });
 
@@ -2130,6 +2147,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2138,6 +2156,7 @@ __webpack_require__.r(__webpack_exports__);
       valid: false,
       registerStatus: false,
       logoutStatus: false,
+      loginError: false,
       emailRules: [function (v) {
         return !!v || 'E-mail is required';
       }, function (v) {
@@ -2157,6 +2176,10 @@ __webpack_require__.r(__webpack_exports__);
 
     if (this.$route.query.logout === 'yes') {
       this.logoutStatus = true;
+    }
+
+    if (this.$route.query.loginError === 'yes') {
+      this.loginError = true;
     }
   },
   methods: {
@@ -2411,6 +2434,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   computed: {
     promoAds: function promoAds() {
@@ -2418,6 +2450,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     ads: function ads() {
       return this.$store.getters.ads;
+    },
+    loading: function loading() {
+      return this.$store.loading;
     }
   }
 });
@@ -38218,7 +38253,8 @@ var render = function() {
               1
             )
           ]
-        : _vm._e()
+        : _vm._e(),
+      _vm._v("\n  " + _vm._s(_vm.authStat) + "\n")
     ],
     2
   )
@@ -38260,7 +38296,7 @@ var render = function() {
                 "v-card",
                 [
                   _c("v-img", {
-                    attrs: { src: _vm.ad.srcImage, height: "300px" }
+                    attrs: { src: _vm.ad.image, height: "300px" }
                   }),
                   _vm._v(" "),
                   _c("v-card-text", [
@@ -38348,7 +38384,7 @@ var render = function() {
                           { attrs: { xs4: "" } },
                           [
                             _c("v-img", {
-                              attrs: { src: ad.srcImage, height: "160px" }
+                              attrs: { src: ad.image, height: "160px" }
                             })
                           ],
                           1
@@ -38582,7 +38618,10 @@ var render = function() {
                         "v-btn",
                         {
                           staticClass: "success",
-                          attrs: { disabled: !_vm.valid },
+                          attrs: {
+                            loading: _vm.loading,
+                            disabled: !_vm.valid || _vm.loading
+                          },
                           on: { click: _vm.createAd }
                         },
                         [_vm._v("Create Add")]
@@ -38684,6 +38723,18 @@ var render = function() {
                                       }
                                     },
                                     [_vm._v("You successfully logged out")]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-alert",
+                                    {
+                                      staticClass: "mb-3",
+                                      attrs: {
+                                        value: _vm.loginError,
+                                        type: "error"
+                                      }
+                                    },
+                                    [_vm._v("You need authorization")]
                                   ),
                                   _vm._v(" "),
                                   _c(
@@ -39195,46 +39246,154 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    [
-      _c(
-        "v-container",
-        { attrs: { fluid: "" } },
+  return !_vm.loading
+    ? _c(
+        "div",
         [
           _c(
-            "v-layout",
-            { attrs: { row: "" } },
+            "v-container",
+            { attrs: { fluid: "" } },
             [
               _c(
-                "v-flex",
-                { attrs: { xs12: "" } },
+                "v-layout",
+                { attrs: { row: "" } },
                 [
                   _c(
-                    "v-carousel",
-                    _vm._l(_vm.promoAds, function(ad) {
-                      return _c(
-                        "v-carousel-item",
-                        { key: ad.id, attrs: { src: ad.srcImage } },
-                        [
-                          _c(
-                            "div",
-                            { staticClass: "carLink" },
+                    "v-flex",
+                    { attrs: { xs12: "" } },
+                    [
+                      _c(
+                        "v-carousel",
+                        _vm._l(_vm.promoAds, function(ad) {
+                          return _c(
+                            "v-carousel-item",
+                            { key: ad.id, attrs: { src: ad.image } },
                             [
+                              _c(
+                                "div",
+                                { staticClass: "carLink" },
+                                [
+                                  _c(
+                                    "v-btn",
+                                    {
+                                      staticClass: "error",
+                                      attrs: { to: "/ad/" + ad.id }
+                                    },
+                                    [_vm._v(_vm._s(ad.title))]
+                                  )
+                                ],
+                                1
+                              )
+                            ]
+                          )
+                        }),
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "v-container",
+            { attrs: { "grid-list-lg": "" } },
+            [
+              _c(
+                "v-layout",
+                { attrs: { row: "", wrap: "" } },
+                _vm._l(_vm.ads, function(ad) {
+                  return _c(
+                    "v-flex",
+                    {
+                      key: ad.id,
+                      attrs: { xs12: "", sm6: "", lg3: "", md4: "" }
+                    },
+                    [
+                      _c(
+                        "v-card",
+                        [
+                          _c("v-img", {
+                            attrs: { src: ad.image, height: "200px" }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "v-card-title",
+                            { attrs: { "primary-title": "" } },
+                            [
+                              _c("div", [
+                                _c("h3", { staticClass: "headline mb-0" }, [
+                                  _vm._v(_vm._s(ad.title))
+                                ]),
+                                _vm._v(" "),
+                                _c("div", [_vm._v(_vm._s(ad.description))])
+                              ])
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-card-actions",
+                            [
+                              _c("v-spacer"),
+                              _vm._v(" "),
+                              _c(
+                                "v-btn",
+                                { attrs: { flat: "", to: "/ad/" + ad.id } },
+                                [_vm._v("Open")]
+                              ),
+                              _vm._v(" "),
                               _c(
                                 "v-btn",
                                 {
-                                  staticClass: "error",
-                                  attrs: { to: "/ad/" + ad.id }
+                                  staticClass: "primary",
+                                  attrs: { raised: "" }
                                 },
-                                [_vm._v(_vm._s(ad.title))]
+                                [_vm._v("Buy")]
                               )
                             ],
                             1
                           )
-                        ]
+                        ],
+                        1
                       )
-                    }),
+                    ],
+                    1
+                  )
+                }),
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      )
+    : _c(
+        "div",
+        [
+          _c(
+            "v-container",
+            [
+              _c(
+                "v-layout",
+                [
+                  _c(
+                    "v-flex",
+                    { staticClass: "text-xs-center", attrs: { xs12: "" } },
+                    [
+                      _c("v-progress-circular", {
+                        attrs: {
+                          indeterminate: "",
+                          size: 70,
+                          width: 7,
+                          color: "purple"
+                        }
+                      })
+                    ],
                     1
                   )
                 ],
@@ -39245,71 +39404,7 @@ var render = function() {
           )
         ],
         1
-      ),
-      _vm._v(" "),
-      _c(
-        "v-container",
-        { attrs: { "grid-list-lg": "" } },
-        [
-          _c(
-            "v-layout",
-            { attrs: { row: "", wrap: "" } },
-            _vm._l(_vm.ads, function(ad) {
-              return _c(
-                "v-flex",
-                { key: ad.id, attrs: { xs12: "", sm6: "", lg3: "", md4: "" } },
-                [
-                  _c(
-                    "v-card",
-                    [
-                      _c("v-img", {
-                        attrs: { src: ad.srcImage, height: "200px" }
-                      }),
-                      _vm._v(" "),
-                      _c("v-card-title", { attrs: { "primary-title": "" } }, [
-                        _c("div", [
-                          _c("h3", { staticClass: "headline mb-0" }, [
-                            _vm._v(_vm._s(ad.title))
-                          ]),
-                          _vm._v(" "),
-                          _c("div", [_vm._v(_vm._s(ad.description))])
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c(
-                        "v-card-actions",
-                        [
-                          _c("v-spacer"),
-                          _vm._v(" "),
-                          _c(
-                            "v-btn",
-                            { attrs: { flat: "", to: "/ad/" + ad.id } },
-                            [_vm._v("Open")]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "v-btn",
-                            { staticClass: "primary", attrs: { raised: "" } },
-                            [_vm._v("Buy")]
-                          )
-                        ],
-                        1
-                      )
-                    ],
-                    1
-                  )
-                ],
-                1
-              )
-            }),
-            1
-          )
-        ],
-        1
       )
-    ],
-    1
-  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -80324,6 +80419,27 @@ var app = new Vue({
 
 /***/ }),
 
+/***/ "./resources/js/auth-quard.js":
+/*!************************************!*\
+  !*** ./resources/js/auth-quard.js ***!
+  \************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _store_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./store/index */ "./resources/js/store/index.js");
+
+/* harmony default export */ __webpack_exports__["default"] = (function (to, from, next) {
+  if (_store_index__WEBPACK_IMPORTED_MODULE_0__["default"].getters.authStat) {
+    return next();
+  } else {
+    next('/login?loginError=yes');
+  }
+});
+
+/***/ }),
+
 /***/ "./resources/js/bootstrap.js":
 /*!***********************************!*\
   !*** ./resources/js/bootstrap.js ***!
@@ -80896,6 +81012,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _store_index__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./store/index */ "./resources/js/store/index.js");
+/* harmony import */ var _router_index__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./router/index */ "./resources/js/router/index.js");
+
 
 
 var HTTP = axios__WEBPACK_IMPORTED_MODULE_0___default.a.create({
@@ -80918,12 +81036,14 @@ HTTP.interceptors.response.use(function (response) {
   return response;
 }, function (error) {
   if (error.response.status == 401) {
-    if (error.response.data.message) {
+    if (error.response.data.message !== 'Unauthenticated.') {
       _store_index__WEBPACK_IMPORTED_MODULE_1__["default"].dispatch('clearError');
       _store_index__WEBPACK_IMPORTED_MODULE_1__["default"].dispatch('setError', error.response.data.message);
-    } else {
-      _store_index__WEBPACK_IMPORTED_MODULE_1__["default"].dispatch('clearError');
-      _store_index__WEBPACK_IMPORTED_MODULE_1__["default"].dispatch('setError', error.response);
+    } else if (localStorage.getItem('token_auth')) {
+      if (localStorage.getItem('token_auth')) {
+        _store_index__WEBPACK_IMPORTED_MODULE_1__["default"].dispatch('clearError');
+        _store_index__WEBPACK_IMPORTED_MODULE_1__["default"].dispatch('setError', error.response.data.message);
+      }
     }
   } else {
     _store_index__WEBPACK_IMPORTED_MODULE_1__["default"].dispatch('clearError');
@@ -80947,13 +81067,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
-/* harmony import */ var _components_Home__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../components/Home */ "./resources/js/components/Home.vue");
-/* harmony import */ var _components_Ads_Ad__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../components/Ads/Ad */ "./resources/js/components/Ads/Ad.vue");
-/* harmony import */ var _components_Ads_AdList__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../components/Ads/AdList */ "./resources/js/components/Ads/AdList.vue");
-/* harmony import */ var _components_Ads_AdNew__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../components/Ads/AdNew */ "./resources/js/components/Ads/AdNew.vue");
-/* harmony import */ var _components_User_Orders__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../components/User/Orders */ "./resources/js/components/User/Orders.vue");
-/* harmony import */ var _components_Auth_Login__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../components/Auth/Login */ "./resources/js/components/Auth/Login.vue");
-/* harmony import */ var _components_Auth_Register__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../components/Auth/Register */ "./resources/js/components/Auth/Register.vue");
+/* harmony import */ var _auth_quard__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../auth-quard */ "./resources/js/auth-quard.js");
+/* harmony import */ var _components_Home__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../components/Home */ "./resources/js/components/Home.vue");
+/* harmony import */ var _components_Ads_Ad__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../components/Ads/Ad */ "./resources/js/components/Ads/Ad.vue");
+/* harmony import */ var _components_Ads_AdList__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../components/Ads/AdList */ "./resources/js/components/Ads/AdList.vue");
+/* harmony import */ var _components_Ads_AdNew__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../components/Ads/AdNew */ "./resources/js/components/Ads/AdNew.vue");
+/* harmony import */ var _components_User_Orders__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../components/User/Orders */ "./resources/js/components/User/Orders.vue");
+/* harmony import */ var _components_Auth_Login__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../components/Auth/Login */ "./resources/js/components/Auth/Login.vue");
+/* harmony import */ var _components_Auth_Register__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../components/Auth/Register */ "./resources/js/components/Auth/Register.vue");
+
 
 
 
@@ -80968,37 +81090,40 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_router__WEBPACK_IMPORTED_MODU
   routes: [{
     path: '',
     name: 'home',
-    component: _components_Home__WEBPACK_IMPORTED_MODULE_2__["default"]
+    component: _components_Home__WEBPACK_IMPORTED_MODULE_3__["default"]
   }, {
     path: '/ad/:id',
     name: '',
     props: true,
-    component: _components_Ads_Ad__WEBPACK_IMPORTED_MODULE_3__["default"]
+    component: _components_Ads_Ad__WEBPACK_IMPORTED_MODULE_4__["default"]
   }, {
     path: '/list',
     name: 'list',
-    component: _components_Ads_AdList__WEBPACK_IMPORTED_MODULE_4__["default"]
+    component: _components_Ads_AdList__WEBPACK_IMPORTED_MODULE_5__["default"],
+    beforeEnter: _auth_quard__WEBPACK_IMPORTED_MODULE_2__["default"]
   }, {
     path: '/new',
     name: 'new',
-    component: _components_Ads_AdNew__WEBPACK_IMPORTED_MODULE_5__["default"]
+    component: _components_Ads_AdNew__WEBPACK_IMPORTED_MODULE_6__["default"],
+    beforeEnter: _auth_quard__WEBPACK_IMPORTED_MODULE_2__["default"]
   }, {
     path: '/login',
     name: 'login',
-    component: _components_Auth_Login__WEBPACK_IMPORTED_MODULE_7__["default"]
+    component: _components_Auth_Login__WEBPACK_IMPORTED_MODULE_8__["default"]
   }, {
     path: '/register',
     name: 'register',
-    component: _components_Auth_Register__WEBPACK_IMPORTED_MODULE_8__["default"]
+    component: _components_Auth_Register__WEBPACK_IMPORTED_MODULE_9__["default"]
   }, {
     path: '/orders',
     name: 'orders',
-    component: _components_User_Orders__WEBPACK_IMPORTED_MODULE_6__["default"]
+    component: _components_User_Orders__WEBPACK_IMPORTED_MODULE_7__["default"],
+    beforeEnter: _auth_quard__WEBPACK_IMPORTED_MODULE_2__["default"]
   }],
   mode: 'history',
   scrollBehavior: function scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
-      return savedPOsition;
+      return savedPosition;
     }
 
     if (to.hash) {
@@ -81025,43 +81150,49 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_router__WEBPACK_IMPORTED_MODU
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _http_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../http.js */ "./resources/js/http.js");
+/* harmony import */ var _router_index__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../router/index */ "./resources/js/router/index.js");
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   state: {
-    ads: [{
-      title: 'First Add',
-      description: 'Hello I am description',
-      promo: false,
-      id: 1,
-      srcImage: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg'
-    }, {
-      title: 'Second Add',
-      description: 'Hello I am description',
-      promo: false,
-      id: 2,
-      srcImage: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg'
-    }, {
-      title: 'Third Add',
-      description: 'Hello I am description',
-      promo: true,
-      id: 3,
-      srcImage: 'https://cdn.vuetifyjs.com/images/carousel/bird.jpg'
-    }, {
-      title: 'Fourth Add',
-      description: 'Hello I am description',
-      promo: true,
-      id: 4,
-      srcImage: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg'
-    }]
+    ads: []
   },
   mutations: {
     createAd: function createAd(state, payload) {
       state.ads.push(payload);
+    },
+    setAds: function setAds(state, payload) {
+      state.ads = payload;
+    },
+    clearAds: function clearAds(state) {
+      state.ads = [];
     }
   },
   actions: {
-    createAd: function createAd(e, payload) {
-      payload.id = parseInt(Math.random() * 1000000);
-      e.commit('createAd', payload);
+    createAd: function createAd(_ref, payload) {
+      var commit = _ref.commit;
+      commit('clearError');
+      commit('setLoading', true);
+      _http_js__WEBPACK_IMPORTED_MODULE_0__["HTTP"].post('ad/create', payload).then(function (resp) {
+        commit('setLoading', false);
+        commit('createAd', resp.data.ad);
+        _router_index__WEBPACK_IMPORTED_MODULE_1__["default"].push('/list');
+      }).catch(function (error) {
+        commit('setError', error.message);
+        commit('setLoading', false);
+      });
+    },
+    fetchAds: function fetchAds(_ref2) {
+      var commit = _ref2.commit;
+      commit('clearError');
+      commit('setLoading', true);
+      _http_js__WEBPACK_IMPORTED_MODULE_0__["HTTP"].get('ad').then(function (resp) {
+        commit('setAds', resp.data.ads);
+        commit('setLoading', false);
+      }).catch(function (error) {
+        commit('setLoading', false);
+      });
     }
   },
   getters: {
@@ -81097,6 +81228,8 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _http__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../http */ "./resources/js/http.js");
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   state: {
     loading: false,
@@ -81125,6 +81258,19 @@ __webpack_require__.r(__webpack_exports__);
     clearError: function clearError(_ref3) {
       var commit = _ref3.commit;
       commit('clearError');
+    },
+    init: function init(_ref4, state) {
+      var commit = _ref4.commit;
+      _http__WEBPACK_IMPORTED_MODULE_0__["HTTP"].get('check-token').then(function (resp) {
+        commit('userAuthS', resp.data.user);
+      }).catch(function (error) {
+        commit('clearToken');
+      });
+    },
+    disconect: function disconect(_ref5, state) {
+      var commit = _ref5.commit,
+          dispatch = _ref5.dispatch;
+      commit('clearToken');
     }
   },
   getters: {
@@ -81180,16 +81326,13 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _router_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../router/index */ "./resources/js/router/index.js");
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _http_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../http.js */ "./resources/js/http.js");
-
+/* harmony import */ var _http_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../http.js */ "./resources/js/http.js");
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   state: {
     user: null,
-    authStat: false,
+    authStat: localStorage.getItem('token_auth') ? true : false,
     token: localStorage.getItem('token_auth')
   },
   getters: {
@@ -81213,6 +81356,15 @@ __webpack_require__.r(__webpack_exports__);
     saveToken: function saveToken(state, token) {
       localStorage.setItem('token_auth', token);
       state.token = token;
+    },
+    clearToken: function clearToken(state) {
+      state.token = null;
+      state.authStat = false;
+      state.user = null;
+      localStorage.removeItem('token_auth');
+      _router_index__WEBPACK_IMPORTED_MODULE_0__["default"].push({
+        path: '/login?loginError=yes'
+      });
     }
   },
   actions: {
@@ -81220,7 +81372,7 @@ __webpack_require__.r(__webpack_exports__);
       var commit = _ref.commit;
       commit('clearError');
       commit('setLoading', true);
-      _http_js__WEBPACK_IMPORTED_MODULE_2__["HTTP"].post('register', payload).then(function (resp) {
+      _http_js__WEBPACK_IMPORTED_MODULE_1__["HTTP"].post('register', payload).then(function (resp) {
         return resp.data;
       }).then(function (data) {
         commit('setLoading', false);
@@ -81241,20 +81393,22 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     userAuth: function userAuth(_ref2, payload) {
-      var commit = _ref2.commit;
+      var commit = _ref2.commit,
+          dispatch = _ref2.dispatch;
       commit('clearError');
       commit('setLoading', true);
       var data = {
         grant_type: "password",
         client_id: 2,
-        client_secret: "5WdwIYOflfB0p3N4vJIiIuI4ItREQO5W3Avm6LRH",
+        client_secret: "aQw9scra7kqmkXmnyeMcOHJ3XGTD7wJ991ZD1vLV",
         username: payload.email,
         password: payload.password
       };
-      _http_js__WEBPACK_IMPORTED_MODULE_2__["HTTP"].post('oauth/token', data).then(function (resp_oauth) {
+      _http_js__WEBPACK_IMPORTED_MODULE_1__["HTTP"].post('oauth/token', data).then(function (resp_oauth) {
         commit('saveToken', resp_oauth.data.access_token);
         commit('setAuthStatus');
         commit('setLoading', false);
+        dispatch('init');
         _router_index__WEBPACK_IMPORTED_MODULE_0__["default"].push({
           path: '/orders'
         });
@@ -81268,13 +81422,13 @@ __webpack_require__.r(__webpack_exports__);
     },
     userLogout: function userLogout(_ref3) {
       var commit = _ref3.commit,
+          dispatch = _ref3.dispatch,
           state = _ref3.state;
       commit('setLoading', true);
       var payload = {};
-      _http_js__WEBPACK_IMPORTED_MODULE_2__["HTTP"].post('logout', {}).then(function (resp_api) {
+      _http_js__WEBPACK_IMPORTED_MODULE_1__["HTTP"].post('logout', {}).then(function (resp_api) {
         commit('setLoading', false);
-        localStorage.removeItem('token_auth');
-        commit('setAuthStatus');
+        dispatch('disconect');
         _router_index__WEBPACK_IMPORTED_MODULE_0__["default"].push({
           path: '/login'
         });
@@ -81306,8 +81460,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! D:\OpenServer\domains\shopcars.os\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! D:\OpenServer\domains\shopcars.os\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! D:\OpenServerNew\domains\shopcars.os\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! D:\OpenServerNew\domains\shopcars.os\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

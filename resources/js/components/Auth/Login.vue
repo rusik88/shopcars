@@ -12,6 +12,7 @@
                         <v-card-text>  
                             <v-alert class="mb-3" :value="registerStatus" type="success">You can authorization</v-alert>
                             <v-alert class="mb-3" :value="logoutStatus" type="success">You successfully logged out</v-alert>
+                            <v-alert class="mb-3" :value="loginError" type="error">You need authorization</v-alert>
                             <v-form v-model="valid" ref="form" validation>
                                 <v-text-field 
                                     v-model="email" 
@@ -53,6 +54,7 @@
                 valid: false,
                 registerStatus: false,
                 logoutStatus: false,
+                loginError: false,
                 emailRules: [  
                     v => !!v || 'E-mail is required',
                     v => /.+@.+/.test(v) || 'E-mail must be valid'
@@ -69,6 +71,9 @@
             }
             if(this.$route.query.logout === 'yes') {
                 this.logoutStatus = true;
+            }
+             if(this.$route.query.loginError === 'yes') {
+                this.loginError = true;
             }
         },
         methods: {

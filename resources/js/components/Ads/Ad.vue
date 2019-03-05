@@ -4,7 +4,7 @@
             <v-flex xs12>
                 <v-card>
                     <v-img
-                        :src="ad.srcImage"
+                        :src="ad.image"
                         height="300px"
                     >
                     </v-img>

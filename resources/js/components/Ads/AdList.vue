@@ -7,7 +7,7 @@
                     <v-layout row>
                         <v-flex xs4> 
                             <v-img
-                                :src="ad.srcImage"
+                                :src="ad.image"
                                 height="160px"
                             ></v-img>
                         </v-flex>
@@ -33,7 +33,8 @@
        computed: {
            myAds() {
                return this.$store.getters.myAds
-           }
+           },
+          
        }
     }
 </script>

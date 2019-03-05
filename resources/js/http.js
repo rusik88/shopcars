@@ -1,6 +1,7 @@
 import Axios from 'axios';
 
 import Store from './store/index';
+import Router from './router/index'; 
 
 export const HTTP = Axios.create({
     baseURL: 'http://shopcars.os/api/',
@@ -23,17 +24,19 @@ HTTP.interceptors.request.use(config =>  {
 
 HTTP.interceptors.response.use(response => response, error => {
     if(error.response.status == 401) {
-        if(error.response.data.message){
+        if(error.response.data.message !== 'Unauthenticated.'){
             Store.dispatch('clearError'); 
             Store.dispatch('setError', error.response.data.message);
         }
-        else {
-            Store.dispatch('clearError'); 
-            Store.dispatch('setError', error.response);
+        else if(localStorage.getItem('token_auth')) {
+            if(localStorage.getItem('token_auth')) {
+                Store.dispatch('clearError'); 
+                Store.dispatch('setError', error.response.data.message);
+            } 
         }
     }
-    else {
-       Store.dispatch('clearError'); 
+    else { 
+       Store.dispatch('clearError');  
        Store.dispatch('setError', error.response.statusText);
     }
 

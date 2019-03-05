@@ -47,13 +47,13 @@
                 <v-layout row>
                     <v-flex xs12>
                        <v-spacer></v-spacer> 
-                       <v-btn :disabled="!valid" class="success" @click="createAd">Create Add</v-btn>
+                       <v-btn :loading="loading" :disabled="!valid || loading" class="success" @click="createAd">Create Add</v-btn>
                     </v-flex>
                 </v-layout>
             </v-flex> 
         </v-layout>
     </v-container>
-</template>
+</template> 
 
 <script>
     export default {
@@ -61,25 +61,37 @@
             return {
                 title: '',
                 description: '',
-                promo: false,
+                promo: false, 
                 valid: false
+                //loading: false
+            }
+        },
+        computed: {
+            user() {
+                return this.$store.getters.user;
+            },
+            loading() {
+               return this.$store.getters.loading;
             }
         },
         methods: {
             createAd() {
                 if(this.$refs.form.validate()) {
-                    //logic
                     const ad = {
                         title: this.title,
+                        user_id: this.user.id,
                         description: this.description,
                         promo: this.promo,
-                        srcImage: "https://cdn-images-1.medium.com/max/1200/1*nq9cdMxtdhQ0ZGL8OuSCUQ.jpeg"
+                        image: "https://cdn-images-1.medium.com/max/1200/1*nq9cdMxtdhQ0ZGL8OuSCUQ.jpeg"
                     }
 
                     this.$store.dispatch('createAd', ad);
                 }
                 
             }
+        }, 
+        created() {
+            console.log(this.loading);
         }
     }
 </script>

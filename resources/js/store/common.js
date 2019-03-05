@@ -1,3 +1,5 @@
+import { HTTP } from '../http'; 
+
 export default {
     state: {
         loading: false,
@@ -24,6 +26,18 @@ export default {
         },
         clearError({commit}) {
             commit('clearError');
+        },
+        init({commit}, state) {
+            HTTP.get('check-token')
+            .then(resp => {
+                commit('userAuthS', resp.data.user)
+            })
+            .catch(error => {
+                commit('clearToken'); 
+            })
+        },
+        disconect({commit, dispatch}, state) {
+            commit('clearToken');
         }
     },
     getters: {

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;  
 
 use App\User;
+use DB;
 
 class UserController extends Controller 
 {
@@ -74,13 +75,23 @@ class UserController extends Controller
 
     public function logout() {
         auth()->user()->tokens->each(function($token, $key) {
+            DB::table('oauth_refresh_tokens')->where('access_token_id', $token->id)->delete();
             $token->delete();
+
         });
 
         return response()->json([
             "message" => "User was logout",
             "status" => true,
             "user" =>  auth()->user()
+        ]);
+    }
+
+    public function changeToken() {
+        return response()->json([
+            "message" => "Token was success",
+            "user" => auth()->user(),
+            "status" => true
         ]);
     }
 }
