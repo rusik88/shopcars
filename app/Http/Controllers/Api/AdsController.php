@@ -25,13 +25,13 @@ class AdsController extends Controller
                 "user_id" => $post["user_id"],
                 "description" => $post["description"],
                 "promo" => $post["promo"],
-                "image" => $post["image"]
+                "image" => "/uploads/".$post["image"]
             ]); 
             if($ad) {
-                 return response()->json([
+                return response()->json([
                     "message" => "Ad was created", 
                     "status" => true,
-                    "ad" => $ad 
+                    "ad" => $ad  
                 ]);
             }
             else { 
@@ -41,8 +41,56 @@ class AdsController extends Controller
                 ]);
             }
         }
+        
     } 
 
+    public function uploadFile(Request $request) {
+        $config_file = config('main');
+
+        $formats = explode('|', $config_file["formats_image"]);
+        
+
+        if($request->hasFile('image')) {
+            $status = false;
+            $file = $request->file('image');
+            foreach($formats as $format) {
+                if($file->extension() == $format) {
+                    $status = true;
+                    if($file->getSize() < $config_file["file_size"]) {
+                        $file = $request->file('image'); 
+                        $file_name =  time().'_'.$file->getClientOriginalName();
+                        $file->move(public_path() . '/uploads', $file_name);
+                        return response()->json([
+                            "message" => "File was downloaded",
+                            "status" => true,
+                            "file" => $file_name
+                        ]);
+                    } 
+                    else {
+                        $file_size = (int)$config_file["file_size"] / 1000000;
+                        return response()->json([
+                            "message" => "File must be less than ".$file_size."MB", 
+                            "status" => false
+                        ]);
+                    }
+                }
+            }
+            
+            if(!$status) {
+                $formats_str = str_replace('|', ', ', $config_file["formats_image"]);
+                return response()->json([
+                    "message" => "File not format. Accept formats are ".$formats_str,
+                    "status" => false
+                ]);
+            }
+        }
+        else {
+            return response()->json([
+                "message" => "File didn't upload. You upload file again, please",
+                "status" => false
+            ]);
+        }
+    }
     public function update(Request $request, $id) {}
     public function delete(Request $request, $id) {}
     

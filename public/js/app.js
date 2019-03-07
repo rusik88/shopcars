@@ -1818,7 +1818,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -2059,7 +2058,9 @@ __webpack_require__.r(__webpack_exports__);
       title: '',
       description: '',
       promo: false,
-      valid: false //loading: false
+      valid: false,
+      image: null,
+      src: '' //loading: false 
 
     };
   },
@@ -2073,16 +2074,32 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     createAd: function createAd() {
-      if (this.$refs.form.validate()) {
+      if (this.$refs.form.validate() && this.image) {
         var ad = {
           title: this.title,
           user_id: this.user.id,
           description: this.description,
           promo: this.promo,
-          image: "https://cdn-images-1.medium.com/max/1200/1*nq9cdMxtdhQ0ZGL8OuSCUQ.jpeg"
+          image: this.image
         };
         this.$store.dispatch('createAd', ad);
       }
+    },
+    triggerUpload: function triggerUpload() {
+      this.$refs.fileInput.click();
+    },
+    onFileChange: function onFileChange(event) {
+      var _this = this;
+
+      var file = event.target.files[0];
+      var reader = new FileReader();
+
+      reader.onload = function (e) {
+        _this.src = reader.result;
+      };
+
+      reader.readAsDataURL(file);
+      this.image = file;
     }
   },
   created: function created() {
@@ -38253,8 +38270,7 @@ var render = function() {
               1
             )
           ]
-        : _vm._e(),
-      _vm._v("\n  " + _vm._s(_vm.authStat) + "\n")
+        : _vm._e()
     ],
     2
   )
@@ -38543,7 +38559,10 @@ var render = function() {
                     [
                       _c(
                         "v-btn",
-                        { staticClass: "warning" },
+                        {
+                          staticClass: "warning",
+                          on: { click: _vm.triggerUpload }
+                        },
                         [
                           _vm._v(
                             "\n                        Upload\n                        "
@@ -38553,7 +38572,14 @@ var render = function() {
                           ])
                         ],
                         1
-                      )
+                      ),
+                      _vm._v(" "),
+                      _c("input", {
+                        ref: "fileInput",
+                        staticStyle: { display: "none" },
+                        attrs: { type: "file", accept: "image/*" },
+                        on: { change: _vm.onFileChange }
+                      })
                     ],
                     1
                   )
@@ -38566,14 +38592,12 @@ var render = function() {
                 { attrs: { row: "" } },
                 [
                   _c("v-flex", { attrs: { xs12: "" } }, [
-                    _c("img", {
-                      staticClass: "mt-3",
-                      attrs: {
-                        src:
-                          "https://cdn.vuetifyjs.com/images/carousel/planet.jpg",
-                        height: "100px"
-                      }
-                    })
+                    _vm.src
+                      ? _c("img", {
+                          staticClass: "mt-3",
+                          attrs: { src: _vm.src, height: "100px" }
+                        })
+                      : _vm._e()
                   ])
                 ],
                 1
@@ -38620,7 +38644,7 @@ var render = function() {
                           staticClass: "success",
                           attrs: {
                             loading: _vm.loading,
-                            disabled: !_vm.valid || _vm.loading
+                            disabled: !_vm.valid || !_vm.image || _vm.loading
                           },
                           on: { click: _vm.createAd }
                         },
@@ -81172,16 +81196,45 @@ __webpack_require__.r(__webpack_exports__);
   actions: {
     createAd: function createAd(_ref, payload) {
       var commit = _ref.commit;
+      var formData = new FormData();
+      formData.append('image', payload.image);
       commit('clearError');
       commit('setLoading', true);
-      _http_js__WEBPACK_IMPORTED_MODULE_0__["HTTP"].post('ad/create', payload).then(function (resp) {
-        commit('setLoading', false);
-        commit('createAd', resp.data.ad);
-        _router_index__WEBPACK_IMPORTED_MODULE_1__["default"].push('/list');
+      _http_js__WEBPACK_IMPORTED_MODULE_0__["HTTP"].post('ad/upload-file', formData, {
+        headers: {
+          "Content-type": "multipart/form-data; charset=utf-8; boundary=" + Math.random().toString().substr(2)
+        }
+      }).then(function (resp) {
+        if (resp) {
+          if (resp.data.status) {
+            payload.image = resp.data.file;
+            _http_js__WEBPACK_IMPORTED_MODULE_0__["HTTP"].post('ad/create', payload).then(function (resp) {
+              commit('setLoading', false);
+              commit('createAd', resp.data.ad);
+              _router_index__WEBPACK_IMPORTED_MODULE_1__["default"].push('/list');
+            }).catch(function (error) {
+              commit('setError', error.message);
+              commit('setLoading', false);
+            });
+          } else {
+            commit('setError', resp.data.message);
+            commit('setLoading', false);
+          }
+        }
       }).catch(function (error) {
         commit('setError', error.message);
         commit('setLoading', false);
       });
+      /*HTTP.post('ad/create', payload) 
+      .then(resp => { 
+          commit('setLoading', false);
+          commit('createAd', resp.data.ad);
+          router.push('/list');
+      })
+      .catch(error => {
+          commit('setError', error.message);
+          commit('setLoading', false); 
+      }) */
     },
     fetchAds: function fetchAds(_ref2) {
       var commit = _ref2.commit;

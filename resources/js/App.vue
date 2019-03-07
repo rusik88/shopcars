@@ -49,7 +49,6 @@
             <v-btn flat dark @click="closeError"> Close</v-btn>
         </v-snackbar>
     </template>
-    {{ authStat }}
   </v-app>
 </template>
 

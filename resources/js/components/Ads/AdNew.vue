@@ -20,19 +20,19 @@
                         required
                         type="text"
                     ></v-textarea>
-
                 </v-form>
                 <v-layout row>
                     <v-flex xs12>
-                        <v-btn class="warning">
+                        <v-btn class="warning" @click="triggerUpload">
                             Upload
                             <v-icon right dark>cloud_upload</v-icon>
                         </v-btn>
+                        <input @change="onFileChange" ref="fileInput" type="file" style="display:none" accept="image/*"> 
                     </v-flex>
                 </v-layout>
                 <v-layout row>
                     <v-flex xs12>
-                        <img class="mt-3" src="https://cdn.vuetifyjs.com/images/carousel/planet.jpg" height="100px">
+                        <img class="mt-3" :src="src" v-if="src"  height="100px">
                     </v-flex>
                 </v-layout>
                 <v-layout row>
@@ -47,7 +47,7 @@
                 <v-layout row>
                     <v-flex xs12>
                        <v-spacer></v-spacer> 
-                       <v-btn :loading="loading" :disabled="!valid || loading" class="success" @click="createAd">Create Add</v-btn>
+                       <v-btn :loading="loading" :disabled="!valid || !image || loading" class="success" @click="createAd">Create Add</v-btn>
                     </v-flex>
                 </v-layout>
             </v-flex> 
@@ -62,8 +62,10 @@
                 title: '',
                 description: '',
                 promo: false, 
-                valid: false
-                //loading: false
+                valid: false,
+                image: null,
+                src: ''
+                //loading: false 
             }
         },
         computed: {
@@ -76,18 +78,32 @@
         },
         methods: {
             createAd() {
-                if(this.$refs.form.validate()) {
+                if(this.$refs.form.validate() && this.image) {
                     const ad = {
                         title: this.title,
                         user_id: this.user.id,
                         description: this.description,
                         promo: this.promo,
-                        image: "https://cdn-images-1.medium.com/max/1200/1*nq9cdMxtdhQ0ZGL8OuSCUQ.jpeg"
+                        image: this.image
                     }
 
-                    this.$store.dispatch('createAd', ad);
+                    this.$store.dispatch('createAd', ad); 
                 }
                 
+            },
+            triggerUpload() {
+                this.$refs.fileInput.click();
+            },
+            onFileChange(event) {
+                const file = event.target.files[0];
+
+                const reader = new FileReader();
+                reader.onload = e => {
+                    this.src = reader.result;
+                }
+                reader.readAsDataURL(file);
+                this.image = file;
+
             }
         }, 
         created() {

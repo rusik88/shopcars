@@ -30,7 +30,8 @@ Route::post('/register/email', ['uses'=>'Api\UserController@userEmail', 'middlew
 Route::group(['prefix'=>'ad'], function(){
     Route::get('', ['uses'=>'Api\AdsController@all']);
     Route::get('{id}', ['uses'=>'Api\AdsController@one']); 
-    Route::post('create', ['uses'=>'Api\AdsController@create', 'middleware' => ['auth:api']]); 
+    Route::post('create', ['uses'=>'Api\AdsController@create', 'middleware' => ['auth:api']]);
+    Route::post('upload-file', ['uses'=>'Api\AdsController@uploadFile', 'middleware' => ['auth:api']]); 
     Route::post('update/{id}', ['uses'=>'Api\AdsController@update', 'middleware' => ['auth:api']]);
     Route::delete('delete/{id}', ['uses'=>'Api\AdsController@delete', 'middleware' => ['auth:api']]);  
 });
