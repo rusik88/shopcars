@@ -99,7 +99,6 @@ import { HTTP, HTTP_LOCAL } from './app.js';
             if(this.$store.getters.getToken) {
                this.$store.dispatch('init');  
             }
-
             this.$store.dispatch('fetchAds');
         }
     }

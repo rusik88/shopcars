@@ -105,9 +105,6 @@
                 this.image = file;
 
             }
-        }, 
-        created() {
-            console.log(this.loading);
         }
     }
 </script>

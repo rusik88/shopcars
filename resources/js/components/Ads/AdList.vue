@@ -34,6 +34,9 @@
            myAds() {
                return this.$store.getters.myAds
            },
+           user() {
+               return this.$store.getters.user
+           }
           
        }
     }
