@@ -36,3 +36,8 @@ Route::group(['prefix'=>'ad'], function(){
     Route::delete('delete/{id}', ['uses'=>'Api\AdsController@delete', 'middleware' => ['auth:api']]);  
 });
 
+Route::group(['prefix'=>'order'], function(){
+    Route::get('all', ['uses'=>'Api\OrdersControllet@all']); 
+    Route::post('create', ['uses'=>'Api\OrdersControllet@create']);   
+});
+

@@ -63,7 +63,7 @@
             <v-card-actions> 
               <v-spacer></v-spacer>
               <v-btn class="error" flat @click="closeModal">Close</v-btn> 
-              <v-btn class='success' :loading='loading' type="submit">Edit</v-btn>
+              <v-btn class='success' :loading='loading' :disabled='$v.$invalid || loading' type="submit">Edit</v-btn>
             </v-card-actions>
         </v-form>
         </v-card-text>
@@ -85,8 +85,7 @@ import { required } from 'vuelidate/lib/validators';
         imageFile: null,
         promo: this.ad.promo,
         image: this.ad.image,
-        dialog: false,
-        formValid: false
+        dialog: false
       }
     },
     computed: {
@@ -108,7 +107,7 @@ import { required } from 'vuelidate/lib/validators';
           this.imageFile = file;
         },
         onSubmit() { 
-          if(!this.$v.$errors && !this.$v.$errors) {
+          if(!this.$v.$error && !this.$v.$pending) { 
             const ad = {
               id: this.ad.id,
               image: this.imageFile, 

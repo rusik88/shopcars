@@ -1,6 +1,6 @@
 <template>
-    <v-container>
-        <v-layout row>
+    <v-container> 
+        <v-layout row v-if='myAds.length > 0'>
             <v-flex xs12 sm6 offset-sm3>
                 <h1 class="text--secondary mb-3">Ad List</h1>
                 <v-card v-for="ad in myAds" :key="ad.id" class="elevation-10 mb-3">
@@ -25,6 +25,15 @@
                 </v-card>
             </v-flex>
         </v-layout>
+        <div v-else>
+            <v-container>
+                <v-layout>
+                    <v-flex xs12 class="text-xs-center">
+                        <v-progress-circular indeterminate :size="70" :width="7" color="purple"></v-progress-circular>
+                    </v-flex> 
+                </v-layout>
+            </v-container>
+        </div>
     </v-container>
 </template>
 

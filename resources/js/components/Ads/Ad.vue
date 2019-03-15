@@ -1,5 +1,5 @@
 <template>
-    <v-container> 
+    <v-container > 
         <v-layout row>
             <v-flex xs12>
                 <v-card v-if='!loading'>
@@ -13,14 +13,14 @@
                         <adEdit :ad='ad' v-if="isUser"></adEdit>  
                         <v-btn class="success">Buy</v-btn>
                     </v-card-actions>
-                </v-card>
+                </v-card> 
                 <div v-else class="text-xs-center pt-5">
                     <v-progress-circular
                         :size="50"
                         color="primary"
                         indeterminate
                         ></v-progress-circular>
-                                    </div>
+                </div>
             </v-flex>
         </v-layout>
     </v-container>

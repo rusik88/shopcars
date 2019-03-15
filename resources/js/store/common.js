@@ -27,10 +27,11 @@ export default {
         clearError({commit}) {
             commit('clearError');
         },
-        init({commit}, state) {
+        init({commit, dispatch}, state) {
             HTTP.get('check-token')
             .then(resp => {
-                commit('userAuthS', resp.data.user)
+                commit('userAuthS', resp.data.user);
+                dispatch('fetchAds');
             })
             .catch(error => {
                 commit('clearToken'); 

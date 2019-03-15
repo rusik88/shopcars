@@ -1,10 +1,10 @@
 <template> 
     <div>
-        <div v-if="!loading">
+        <div v-if="!loading && ads.length > 0">
             <v-container fluid>
                 <v-layout row>
-                    <v-flex xs12>
-                        <v-carousel>
+                    <v-flex xs12> 
+                        <v-carousel v-if='promoAds.length > 0'>
                             <v-carousel-item
                             v-for="ad in promoAds"
                             :key="ad.id"
@@ -15,6 +15,7 @@
                                 </div>
                             </v-carousel-item>
                         </v-carousel>
+                        <div v-else>Ads are empty</div>
                     </v-flex>
                 </v-layout>
             </v-container>
@@ -37,7 +38,7 @@
                             <v-card-actions>
                                 <v-spacer></v-spacer>
                                 <v-btn flat :to="'/ad/'+ad.id">Open</v-btn>
-                                <v-btn raised class="primary">Buy</v-btn>
+                                <buyAd :ad='ad'></buyAd>
                             </v-card-actions>
                         </v-card>
                     </v-flex>
@@ -60,10 +61,10 @@
 export default {
     computed: {
         promoAds() {
-            return this.$store.getters.promoAds
+            return this.$store.getters.promoAds;
         },
         ads() {
-            return this.$store.getters.ads
+            return this.$store.getters.ads;
         },
         loading() {
             return this.$store.getters.loading;

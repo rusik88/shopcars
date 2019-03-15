@@ -97,9 +97,13 @@ import { HTTP, HTTP_LOCAL } from './app.js';
         },
         created() {
             if(this.$store.getters.getToken) {
-               this.$store.dispatch('init');  
+               this.$store.dispatch('init')  
             }
-            this.$store.dispatch('fetchAds');
+            else {
+                this.$store.dispatch('fetchAds');
+            }
+            
+            
         }
     }
 </script>

@@ -1,7 +1,6 @@
 import Axios from 'axios';
 
 import Store from './store/index';
-import Router from './router/index'; 
 
 export const HTTP = Axios.create({
     baseURL: 'http://shopcars.os/api/',

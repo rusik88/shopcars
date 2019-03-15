@@ -120,8 +120,9 @@ export default {
                 return ad.promo;
             })
         },
-        myAds(state, getters) {
+        myAds(state, getters) { 
             return state.ads.filter(ad => ad.user_id == getters.user.id);
+            //return state.ads;
         },
         adById(state) {
             return adId => {
