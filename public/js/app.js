@@ -1929,16 +1929,32 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['id'],
   data: function data() {
-    return {};
+    return {
+      dialogDelete: false
+    };
   },
   computed: {
     ad: function ad() {
-      var id = this.id;
-      return this.$store.getters.adById(id);
+      return this.$store.getters.ad;
     },
     loading: function loading() {
       return this.$store.getters.loading;
@@ -1947,11 +1963,28 @@ __webpack_require__.r(__webpack_exports__);
       return this.$store.getters.user;
     },
     isUser: function isUser() {
-      return this.ad.user_id === this.user.id;
+      if (this.user) {
+        return this.ad.user_id === this.user.id;
+      } else {
+        return false;
+      }
+    },
+    localLoad: function localLoad() {
+      return this.$store.getters.localLoad;
+    }
+  },
+  methods: {
+    deleteAd: function deleteAd() {
+      this.$store.dispatch('deleteAd', {
+        id: this.id
+      });
     }
   },
   components: {
     adEdit: _AdEdit__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+  mounted: function mounted() {
+    this.$store.dispatch('getAdById', this.id);
   }
 });
 
@@ -2058,6 +2091,9 @@ __webpack_require__.r(__webpack_exports__);
   computed: {
     loading: function loading() {
       return this.$store.getters.loading;
+    },
+    localLoad: function localLoad() {
+      return this.$store.getters.localLoad;
     }
   },
   methods: {
@@ -2088,7 +2124,7 @@ __webpack_require__.r(__webpack_exports__);
         };
         this.$store.dispatch('updateAd', ad);
 
-        if (!this.loading) {
+        if (!this.localLoad) {
           this.dialog = false;
         }
       }
@@ -2721,6 +2757,29 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ["ad"],
@@ -2729,12 +2788,16 @@ __webpack_require__.r(__webpack_exports__);
       name: '',
       phone: '',
       dialog: false,
-      valid: false
+      valid: false,
+      finishOrder: false
     };
   },
   computed: {
     localLoading: function localLoading() {
       return this.$store.getters.localLoading;
+    },
+    textSuccesfullOrder: function textSuccesfullOrder() {
+      return this.$store.getters.textSuccesfullOrder;
     }
   },
   methods: {
@@ -2749,6 +2812,7 @@ __webpack_require__.r(__webpack_exports__);
         };
         this.$store.dispatch('orderAdd', customer).finally(function () {
           _this.dialog = false;
+          _this.finishOrder = true;
         });
       }
     },
@@ -2805,22 +2869,39 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
-    return {
-      orders: [{
-        id: 'fds3',
-        name: 'Ruslan',
-        phone: '(097) 285-40-24',
-        addId: '123',
-        done: false
-      }]
-    };
+    return {};
   },
   methods: {
     clickDefault: function clickDefault() {},
     markDone: function markDone(order) {
-      order.done = true;
+      order.done = order.done ? 0 : 1;
+      this.$store.dispatch('updateOrderDone', order);
+    }
+  },
+  computed: {
+    loading: function loading() {
+      return this.$store.getters.loading;
+    },
+    ordersAll: function ordersAll() {
+      return this.$store.getters.ordersAll;
+    }
+  },
+  created: function created() {
+    if (this.ordersAll.length == 0) {
+      this.$store.dispatch('allOrders');
     }
   }
 });
@@ -38600,7 +38681,7 @@ var render = function() {
             "v-flex",
             { attrs: { xs12: "" } },
             [
-              !_vm.loading
+              !_vm.loading && _vm.ad != null
                 ? _c(
                     "v-card",
                     [
@@ -38623,9 +38704,99 @@ var render = function() {
                             ? _c("adEdit", { attrs: { ad: _vm.ad } })
                             : _vm._e(),
                           _vm._v(" "),
-                          _c("v-btn", { staticClass: "success" }, [
-                            _vm._v("Buy")
-                          ])
+                          _vm.isUser
+                            ? _c(
+                                "v-btn",
+                                {
+                                  staticClass: "error",
+                                  on: {
+                                    click: function($event) {
+                                      _vm.dialogDelete = true
+                                    }
+                                  }
+                                },
+                                [_vm._v("Delete")]
+                              )
+                            : _vm._e(),
+                          _vm._v(" "),
+                          !_vm.isUser
+                            ? _c("buyAd", { attrs: { ad: _vm.ad } })
+                            : _vm._e()
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-dialog",
+                        {
+                          attrs: { "max-width": "500px" },
+                          model: {
+                            value: _vm.dialogDelete,
+                            callback: function($$v) {
+                              _vm.dialogDelete = $$v
+                            },
+                            expression: "dialogDelete"
+                          }
+                        },
+                        [
+                          _c(
+                            "v-card",
+                            [
+                              _c(
+                                "v-card-title",
+                                {
+                                  staticClass: "headline grey lighten-2",
+                                  attrs: { "primary-title": "" }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                        Do you want delete '" +
+                                      _vm._s(_vm.ad.title) +
+                                      "' ?\n                    "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c("v-divider", { staticClass: "mt-2 mb-2" }),
+                              _vm._v(" "),
+                              _c(
+                                "v-card-actions",
+                                [
+                                  _c("v-spacer"),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-btn",
+                                    {
+                                      staticClass: "info",
+                                      on: {
+                                        click: function($event) {
+                                          _vm.dialogDelete = false
+                                        }
+                                      }
+                                    },
+                                    [_vm._v("No")]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-btn",
+                                    {
+                                      staticClass: "error",
+                                      attrs: {
+                                        loading: _vm.localLoad,
+                                        disabled: _vm.localLoad
+                                      },
+                                      on: { click: _vm.deleteAd }
+                                    },
+                                    [_vm._v("Yes")]
+                                  )
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c("v-divider", { staticClass: "mt-2" })
+                            ],
+                            1
+                          )
                         ],
                         1
                       )
@@ -38694,7 +38865,7 @@ var render = function() {
           _c(
             "v-btn",
             {
-              staticClass: "warning mr-3",
+              staticClass: "info mr-3",
               attrs: { slot: "activator", flat: "" },
               slot: "activator"
             },
@@ -38899,8 +39070,8 @@ var render = function() {
                             {
                               staticClass: "success",
                               attrs: {
-                                loading: _vm.loading,
-                                disabled: _vm.$v.$invalid || _vm.loading,
+                                loading: _vm.localLoad,
+                                disabled: _vm.$v.$invalid || _vm.localLoad,
                                 type: "submit"
                               }
                             },
@@ -40200,6 +40371,7 @@ var render = function() {
                             {
                               staticClass: "success",
                               attrs: {
+                                flat: "",
                                 loading: _vm.localLoading,
                                 disabled: _vm.$v.$invalid || _vm.localLoading,
                                 type: "submit"
@@ -40212,6 +40384,78 @@ var render = function() {
                       )
                     ],
                     1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-dialog",
+        {
+          attrs: { "max-width": "500px" },
+          model: {
+            value: _vm.finishOrder,
+            callback: function($$v) {
+              _vm.finishOrder = $$v
+            },
+            expression: "finishOrder"
+          }
+        },
+        [
+          _c(
+            "v-card",
+            [
+              _c(
+                "v-card-title",
+                {
+                  staticClass: "headline grey lighten-2",
+                  attrs: { "primary-title": "" }
+                },
+                [_vm._v("\n          Order is succesfull\n        ")]
+              ),
+              _vm._v(" "),
+              _c(
+                "v-card-text",
+                [
+                  _c(
+                    "v-alert",
+                    {
+                      attrs: {
+                        value: true,
+                        color: "success",
+                        icon: "info",
+                        outline: ""
+                      }
+                    },
+                    [_vm._v(_vm._s(_vm.textSuccesfullOrder))]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "v-card-actions",
+                [
+                  _c("v-spacer"),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      staticClass: "success",
+                      attrs: { flat: "" },
+                      on: {
+                        click: function($event) {
+                          _vm.finishOrder = false
+                        }
+                      }
+                    },
+                    [_vm._v("Ok")]
                   )
                 ],
                 1
@@ -40249,91 +40493,133 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c(
-    "v-container",
+    "div",
     [
-      _c(
-        "v-layout",
-        { attrs: { row: "" } },
-        [
-          _c(
-            "v-flex",
-            { attrs: { xs12: "", sm6: "", "offset-sm3": "" } },
+      !_vm.loading
+        ? _c(
+            "v-container",
             [
-              _c("h1", { staticClass: "text--secondary mb-3" }, [
-                _vm._v("Orders")
-              ]),
-              _vm._v(" "),
               _c(
-                "v-list",
-                { attrs: { subheader: "", "two-line": "" } },
-                _vm._l(_vm.orders, function(order) {
-                  return _c(
-                    "v-list-tile",
-                    { key: order.id, on: { click: _vm.clickDefault } },
+                "v-layout",
+                { attrs: { row: "" } },
+                [
+                  _c(
+                    "v-flex",
+                    { attrs: { xs12: "", sm6: "", "offset-sm3": "" } },
+                    [
+                      _c("h1", { staticClass: "text--secondary mb-3" }, [
+                        _vm._v("Orders")
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "v-list",
+                        { attrs: { subheader: "", "two-line": "" } },
+                        _vm._l(_vm.ordersAll, function(order) {
+                          return _c(
+                            "v-list-tile",
+                            { key: order.id, on: { click: _vm.clickDefault } },
+                            [
+                              _c(
+                                "v-list-tile-action",
+                                [
+                                  _c("v-checkbox", {
+                                    attrs: {
+                                      "input-value": order.done,
+                                      color: "success"
+                                    },
+                                    on: {
+                                      change: function($event) {
+                                        _vm.markDone(order)
+                                      }
+                                    }
+                                  })
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-list-tile-content",
+                                {
+                                  on: {
+                                    click: function($event) {
+                                      _vm.notifications = !_vm.notifications
+                                    }
+                                  }
+                                },
+                                [
+                                  _c("v-list-tile-title", [
+                                    _vm._v(_vm._s(order.name))
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("v-list-tile-sub-title", [
+                                    _vm._v(_vm._s(order.phone))
+                                  ])
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-list-tile-action",
+                                [
+                                  _c(
+                                    "v-btn",
+                                    {
+                                      staticClass: "primary",
+                                      attrs: { to: "/ad/" + order.ad_id }
+                                    },
+                                    [_vm._v("Open")]
+                                  )
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        }),
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        : _c(
+            "div",
+            [
+              _c(
+                "v-container",
+                [
+                  _c(
+                    "v-layout",
                     [
                       _c(
-                        "v-list-tile-action",
+                        "v-flex",
+                        { staticClass: "text-xs-center", attrs: { xs12: "" } },
                         [
-                          _c("v-checkbox", {
+                          _c("v-progress-circular", {
                             attrs: {
-                              "input-value": order.done,
-                              color: "success"
-                            },
-                            on: {
-                              change: function($event) {
-                                _vm.markDone(order)
-                              }
+                              indeterminate: "",
+                              size: 70,
+                              width: 7,
+                              color: "purple"
                             }
                           })
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-list-tile-content",
-                        {
-                          on: {
-                            click: function($event) {
-                              _vm.notifications = !_vm.notifications
-                            }
-                          }
-                        },
-                        [
-                          _c("v-list-tile-title", [_vm._v(_vm._s(order.name))]),
-                          _vm._v(" "),
-                          _c("v-list-tile-sub-title", [
-                            _vm._v(_vm._s(order.phone))
-                          ])
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-list-tile-action",
-                        [
-                          _c(
-                            "v-btn",
-                            {
-                              staticClass: "primary",
-                              attrs: { to: "/add/" + order.addId }
-                            },
-                            [_vm._v("Open")]
-                          )
                         ],
                         1
                       )
                     ],
                     1
                   )
-                }),
+                ],
                 1
               )
             ],
             1
           )
-        ],
-        1
-      )
     ],
     1
   )
@@ -82100,11 +82386,17 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_router__WEBPACK_IMPORTED_MODU
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _http_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../http.js */ "./resources/js/http.js");
 /* harmony import */ var _router_index__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../router/index */ "./resources/js/router/index.js");
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   state: {
-    ads: []
+    ads: [],
+    ad: null,
+    localLoad: false
   },
   mutations: {
     createAd: function createAd(state, payload) {
@@ -82116,17 +82408,29 @@ __webpack_require__.r(__webpack_exports__);
     setAdsUpdate: function setAdsUpdate(state, payload) {
       for (var index in state.ads) {
         if (state.ads[index].id == payload.id) {
-          state.ads[index].description = payload.description;
-          state.ads[index].image = payload.image;
-          state.ads[index].promo = payload.promo;
-          state.ads[index].title = payload.title;
-          state.ads[index].updated_at = payload;
-          state.ads[index].created_at = payload.created_at;
+          state.ads[index] = _objectSpread({}, payload);
         }
+      }
+
+      if (state.ad != null) {
+        state.ad = _objectSpread({}, payload);
       }
     },
     clearAds: function clearAds(state) {
       state.ads = [];
+    },
+    setAd: function setAd(state, payload) {
+      state.ad = payload;
+    },
+    setLocalLoad: function setLocalLoad(state, payload) {
+      state.localLoad = payload;
+    },
+    deleteAdFromState: function deleteAdFromState(state, payload) {
+      for (var index in state.ads) {
+        if (state.ads[index].id == payload.id) {
+          state.ads.splice(index, 1);
+        }
+      }
     }
   },
   actions: {
@@ -82135,7 +82439,7 @@ __webpack_require__.r(__webpack_exports__);
       var formData = new FormData();
       formData.append('image', payload.image);
       commit('clearError');
-      commit('setLoading', true);
+      commit('setLocalLoad', true);
       _http_js__WEBPACK_IMPORTED_MODULE_0__["HTTP"].post('ad/upload-file', formData, {
         headers: {
           "Content-type": "multipart/form-data; charset=utf-8; boundary=" + Math.random().toString().substr(2)
@@ -82146,15 +82450,15 @@ __webpack_require__.r(__webpack_exports__);
         }
 
         _http_js__WEBPACK_IMPORTED_MODULE_0__["HTTP"].post('ad/update/' + payload.id, payload).then(function (resp) {
-          commit('setLoading', false);
+          commit('setLocalLoad', false);
           commit('setAdsUpdate', resp.data.ad);
         }).catch(function (error) {
           commit('setError', error.message);
-          commit('setLoading', false);
+          commit('setLocalLoad', false);
         });
       }).catch(function (error) {
         commit('setError', error.message);
-        commit('setLoading', false);
+        commit('setLocalLoad', false);
       });
     },
     createAd: function createAd(_ref2, payload) {
@@ -82199,6 +82503,33 @@ __webpack_require__.r(__webpack_exports__);
       }).catch(function (error) {
         commit('setLoading', false);
       });
+    },
+    getAdById: function getAdById(_ref4, payload) {
+      var commit = _ref4.commit;
+      commit('clearError');
+      commit('setLoading', true);
+      _http_js__WEBPACK_IMPORTED_MODULE_0__["HTTP"].get('ad/' + payload).then(function (resp) {
+        commit('setLoading', false);
+        commit('setAd', resp.data.ad);
+      }).catch(function (error) {
+        commit('setError', error.message);
+        commit('setLoading', false);
+      });
+    },
+    deleteAd: function deleteAd(_ref5, payload) {
+      var commit = _ref5.commit;
+      commit('clearError');
+      commit('setLocalLoad', true);
+      _http_js__WEBPACK_IMPORTED_MODULE_0__["HTTP"].post('ad/delete', payload).then(function (resp) {
+        commit('setLoading', false);
+        commit('deleteAdFromState', payload);
+        _router_index__WEBPACK_IMPORTED_MODULE_1__["default"].push({
+          path: '/list'
+        });
+      }).catch(function (error) {
+        commit('setError', error.message);
+        commit('setLocalLoad', false);
+      });
     }
   },
   getters: {
@@ -82213,14 +82544,10 @@ __webpack_require__.r(__webpack_exports__);
     myAds: function myAds(state, getters) {
       return state.ads.filter(function (ad) {
         return ad.user_id == getters.user.id;
-      }); //return state.ads;
+      });
     },
-    adById: function adById(state) {
-      return function (adId) {
-        return state.ads.find(function (ad) {
-          return ad.id === +adId;
-        });
-      };
+    ad: function ad(state) {
+      return state.ad;
     }
   }
 });
@@ -82339,19 +82666,40 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _http_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../http.js */ "./resources/js/http.js");
+/* harmony import */ var _router_index__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../router/index */ "./resources/js/router/index.js");
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   state: {
-    localLoading: false
+    localLoading: false,
+    textSuccesfullOrder: true,
+    ordersAll: []
   },
   getters: {
     localLoading: function localLoading(state) {
       return state.localLoading;
+    },
+    textSuccesfullOrder: function textSuccesfullOrder(state) {
+      return state.textSuccesfullOrder;
+    },
+    ordersAll: function ordersAll(state) {
+      return state.ordersAll;
     }
   },
   mutations: {
     setLocalLoading: function setLocalLoading(state, payload) {
       state.localLoading = payload;
+    },
+    setTextSuccesfullOrder: function setTextSuccesfullOrder(state, payload) {
+      state.textSuccesfullOrder = payload;
+    },
+    setOrders: function setOrders(state, payload) {
+      state.ordersAll = payload;
+    },
+    setDoneOrder: function setDoneOrder(state, payload) {
+      for (var key in state.ordersAll) {
+        if (state.ordersAll[key] == payload.id) state.ordersAll[key].done = payload.done;
+      }
     }
   },
   actions: {
@@ -82362,6 +82710,29 @@ __webpack_require__.r(__webpack_exports__);
       commit('setLocalLoading', true);
       _http_js__WEBPACK_IMPORTED_MODULE_0__["HTTP"].post('/order/create', payload).then(function (resp) {
         commit('setLocalLoading', false);
+        commit('setTextSuccesfullOrder', resp.data.message);
+      }).catch(function (error) {
+        commit('setLocalLoading', false);
+        commit('setError', error.message);
+      });
+    },
+    allOrders: function allOrders(_ref2) {
+      var commit = _ref2.commit;
+      commit('clearError');
+      commit('setLocalLoading', true);
+      _http_js__WEBPACK_IMPORTED_MODULE_0__["HTTP"].get('order/all').then(function (resp) {
+        commit('setLocalLoading', false);
+        commit('setOrders', resp.data.orders);
+      }).catch(function (error) {
+        commit('setLocalLoading', false);
+        commit('setError', error.message);
+      });
+    },
+    updateOrderDone: function updateOrderDone(_ref3, payload) {
+      var commit = _ref3.commit;
+      commit('clearError');
+      _http_js__WEBPACK_IMPORTED_MODULE_0__["HTTP"].post('order/done', payload).then(function (resp) {
+        commit('setDoneOrder', resp.data);
       }).catch(function (error) {
         commit('setLocalLoading', false);
         commit('setError', error.message);

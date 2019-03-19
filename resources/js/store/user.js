@@ -98,7 +98,7 @@ export default {
                    commit('setLoading', false);
                    commit('setError', 'Logout has errors API');
             })
-        },
-         
+        }
+          
     }
 } 

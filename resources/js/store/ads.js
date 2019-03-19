@@ -3,7 +3,9 @@ import router from '../router/index';
 
 export default {
     state: { 
-        ads: []
+        ads: [],
+        ad: null,
+        localLoad: false
     },
     mutations: {
         createAd(state, payload) {
@@ -15,17 +17,28 @@ export default {
         setAdsUpdate(state, payload) {
            for (let index in state.ads) {
                 if(state.ads[index].id == payload.id) {
-                    state.ads[index].description = payload.description;
-                    state.ads[index].image = payload.image;
-                    state.ads[index].promo = payload.promo;
-                    state.ads[index].title = payload.title;
-                    state.ads[index].updated_at = payload;
-                    state.ads[index].created_at = payload.created_at;
+                    state.ads[index] = {...payload}
                 }
+           }
+           if(state.ad != null) {
+               state.ad = {...payload}
            }
         },
         clearAds(state) {
-            state.ads = [];
+            state.ads = []; 
+        },
+        setAd(state, payload) {
+            state.ad = payload;
+        },
+        setLocalLoad(state, payload) {
+            state.localLoad = payload;
+        },
+        deleteAdFromState(state, payload) {
+            for (let index in state.ads) {
+                if(state.ads[index].id == payload.id) {
+                    state.ads.splice(index, 1); 
+                }
+            } 
         }
     },
     actions: {
@@ -34,7 +47,7 @@ export default {
             let formData = new FormData();
             formData.append('image', payload.image);
             commit('clearError');
-            commit('setLoading', true); 
+            commit('setLocalLoad', true);
             HTTP.post('ad/upload-file', formData, {
                 headers: {
                     "Content-type": "multipart/form-data; charset=utf-8; boundary="+Math.random().toString().substr(2)
@@ -47,17 +60,17 @@ export default {
 
                 HTTP.post('ad/update/'+payload.id, payload)
                 .then(resp => {
-                    commit('setLoading', false);
+                    commit('setLocalLoad', false);
                     commit('setAdsUpdate', resp.data.ad);
                 })
                 .catch(error => {
                     commit('setError', error.message);
-                    commit('setLoading', false); 
+                    commit('setLocalLoad', false); 
                 })
             }) 
             .catch(error => {
                 commit('setError', error.message);
-                commit('setLoading', false);  
+                commit('setLocalLoad', false);  
             });
         },
 
@@ -76,7 +89,7 @@ export default {
                 if(resp) {
                     if(resp.data.status) {
                         payload.image = resp.data.file; 
-                        HTTP.post('ad/create', payload)
+                        HTTP.post('ad/create', payload) 
                         .then(resp => {
                             commit('setLoading', false);
                             commit('createAd', resp.data.ad);
@@ -109,6 +122,33 @@ export default {
             .catch(error => {
                 commit('setLoading', false);
             })
+        },
+        getAdById({commit}, payload) {
+            commit('clearError');
+            commit('setLoading', true);
+            HTTP.get('ad/'+payload)
+            .then(resp => {
+                commit('setLoading', false);
+                commit('setAd', resp.data.ad)
+            })
+            .catch(error => {
+                commit('setError', error.message);
+                commit('setLoading', false);  
+            });
+        },
+        deleteAd({commit}, payload) {
+            commit('clearError');
+            commit('setLocalLoad', true);
+            HTTP.post('ad/delete', payload)
+            .then(resp => {
+                commit('setLoading', false);
+                commit('deleteAdFromState', payload)
+                router.push({path: '/list'}); 
+            })
+            .catch(error => {
+                commit('setError', error.message);
+                commit('setLocalLoad', false);  
+            });
         }
     },
     getters: { 
@@ -122,12 +162,9 @@ export default {
         },
         myAds(state, getters) { 
             return state.ads.filter(ad => ad.user_id == getters.user.id);
-            //return state.ads;
         },
-        adById(state) {
-            return adId => {
-                return state.ads.find(ad => ad.id === +adId)
-            }
+        ad(state) {
+            return state.ad;
         }
     }
 }

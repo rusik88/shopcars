@@ -29,15 +29,16 @@ Route::post('/register/email', ['uses'=>'Api\UserController@userEmail', 'middlew
 
 Route::group(['prefix'=>'ad'], function(){
     Route::get('', ['uses'=>'Api\AdsController@all']);
-    Route::get('{id}', ['uses'=>'Api\AdsController@one']); 
     Route::post('create', ['uses'=>'Api\AdsController@create', 'middleware' => ['auth:api']]);
     Route::post('upload-file', ['uses'=>'Api\AdsController@uploadFile', 'middleware' => ['auth:api']]); 
     Route::post('update/{id}', ['uses'=>'Api\AdsController@update', 'middleware' => ['auth:api']]);
-    Route::delete('delete/{id}', ['uses'=>'Api\AdsController@delete', 'middleware' => ['auth:api']]);  
+    Route::post('delete', ['uses'=>'Api\AdsController@deleteAd', 'middleware' => ['auth:api']]);  
+    Route::get('{id}', ['uses'=>'Api\AdsController@one']); 
 });
 
 Route::group(['prefix'=>'order'], function(){
-    Route::get('all', ['uses'=>'Api\OrdersControllet@all']); 
-    Route::post('create', ['uses'=>'Api\OrdersControllet@create']);   
+    Route::get('all', ['uses'=>'Api\OrdersController@all', 'middleware' => ['auth:api']]);
+    Route::post('create', ['uses'=>'Api\OrdersController@create']);   
+    Route::post('done', ['uses'=>'Api\OrdersController@orderDone']);   
 });
 

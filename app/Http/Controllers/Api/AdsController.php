@@ -13,8 +13,25 @@ class AdsController extends Controller
         $ads = Ad::all();
         return response()->json(array("ads" => $ads)); 
     }
-    public function one() {
-        return response()->json(array("test", 25));
+    public function one($id) {
+
+        $ad = Ad::where('id', $id)->first();
+
+        if($ad) {
+            return response()->json([
+                "message" => "Ad was created", 
+                "status" => true,
+                "ad" => $ad  
+            ]);
+        }
+        else {
+            return response()->json([
+                "message" => "Ad was found",
+                "status" => false
+            ]);
+        }
+
+        
     } 
 
     public function create(Request $request) { 
@@ -126,6 +143,26 @@ class AdsController extends Controller
             ]);
         } 
     }
-    public function delete(Request $request, $id) {}
+    public function deleteAd(Request $request) {
+        $post = $request->all();
+
+        if($post) {
+            $ad = Ad::where('id', $post['id']);
+            $ad->delete(); 
+            return response()->json([
+                "message" => "Ad was deleted", 
+                "status" => true
+            ]);
+        }
+        else {
+            return response()->json([
+                "message" => "Ad didn't deleted", 
+                "status" => false
+            ]); 
+        }
+
+
+        
+    }
     
 }

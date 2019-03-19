@@ -4,7 +4,7 @@
       v-model="dialog"
       width="500"
     >
-      <v-btn class='warning mr-3' flat slot='activator'>Edit Ad</v-btn>
+      <v-btn class='info mr-3' flat slot='activator'>Edit Ad</v-btn>
 
       <v-card> 
         <v-card-title class="headline grey lighten-2" primary-title>Edit by "{{ ad.title }}"</v-card-title>
@@ -58,12 +58,12 @@
                 </v-flex> 
             </v-layout>
 
-            <v-divider class='mt-2 mb-2'></v-divider>
+            <v-divider class='mt-2 mb-2'></v-divider> 
 
             <v-card-actions> 
               <v-spacer></v-spacer>
               <v-btn class="error" flat @click="closeModal">Close</v-btn> 
-              <v-btn class='success' :loading='loading' :disabled='$v.$invalid || loading' type="submit">Edit</v-btn>
+              <v-btn class='success' :loading='localLoad' :disabled='$v.$invalid || localLoad' type="submit">Edit</v-btn>
             </v-card-actions>
         </v-form>
         </v-card-text>
@@ -91,6 +91,9 @@ import { required } from 'vuelidate/lib/validators';
     computed: {
       loading() {
         return this.$store.getters.loading
+      },
+      localLoad() {
+        return this.$store.getters.localLoad
       }
     },
     methods: { 
@@ -115,11 +118,12 @@ import { required } from 'vuelidate/lib/validators';
               description: this.description, 
               promo: this.promo
             };
-
             this.$store.dispatch('updateAd', ad);
-            if(!this.loading) {
+            
+            if(!this.localLoad) {
                 this.dialog = false; 
             }
+            
            
           }
         },
