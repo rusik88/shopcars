@@ -64,7 +64,8 @@ import { HTTP, HTTP_LOCAL } from './app.js';
                     {title: 'Registration', icon: 'face', url: '/register', auth: false},
                     {title: 'Orders', icon: 'bookmark_border', url: '/orders', auth: true},
                     {title: 'New ad', icon: 'note_add', url: '/new', auth: true},
-                    {title: 'My ads', icon: 'list', url: '/list', auth: true}
+                    {title: 'My ads', icon: 'list', url: '/list', auth: true},
+                    {title: 'Animate', icon: 'list', url: '/animate', auth: true}
                 ]
             }
         },

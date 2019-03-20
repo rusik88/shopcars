@@ -4,6 +4,7 @@
             <v-container fluid>
                 <v-layout row>
                     <v-flex xs12> 
+                        {{ promoAdsMethod() }}
                         <v-carousel v-if='promoAds.length > 0'>
                             <v-carousel-item
                             v-for="ad in promoAds"
@@ -59,17 +60,23 @@
 
 <script>
 export default {
+    data() {
+        return {
+            promoAds: []
+        }
+    },
     computed: {
-        promoAds() {
-            return this.$store.getters.promoAds;
-        },
         ads() {
             return this.$store.getters.ads;
         },
         loading() {
-            return this.$store.getters.loading;
+            return this.$store.getters.loading; 
         }
-
+    },
+    methods: {
+        promoAdsMethod() {
+            this.promoAds = this.ads.filter(ad => ad.promo == 1); 
+        }
     }
 }
 </script>

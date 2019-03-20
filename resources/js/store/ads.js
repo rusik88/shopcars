@@ -155,11 +155,6 @@ export default {
         ads(state) {
             return state.ads; 
         },
-        promoAds(state) {
-            return state.ads.filter(ad => {
-                return ad.promo;
-            })
-        },
         myAds(state, getters) { 
             return state.ads.filter(ad => ad.user_id == getters.user.id);
         },

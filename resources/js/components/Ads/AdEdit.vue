@@ -54,7 +54,7 @@
                     v-model="promo"
                     label="Add to promo?"
                     color="primary" 
-                    ></v-switch>
+                    ></v-switch> 
                 </v-flex> 
             </v-layout>
 
@@ -116,7 +116,7 @@ import { required } from 'vuelidate/lib/validators';
               image: this.imageFile, 
               title: this.title,
               description: this.description, 
-              promo: this.promo
+              promo: this.promo ? 1 : 0
             };
             this.$store.dispatch('updateAd', ad);
             

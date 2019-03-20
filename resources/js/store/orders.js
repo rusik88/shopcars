@@ -32,6 +32,9 @@ export default {
             for(let key in state.ordersAll) {
                 if(state.ordersAll[key] == payload.id) state.ordersAll[key].done = payload.done;
             }
+        },
+        addOrderToState(state, payload) {
+            state.ordersAll.unshift({...payload});
         }
     },
     actions: {
@@ -41,6 +44,9 @@ export default {
             HTTP.post('/order/create', payload)
             .then(resp => {
                 commit('setLocalLoading', false);
+                if(state.ordersAll.length > 0) {
+                    commit('addOrderToState', resp.data.order);
+                }
                 commit('setTextSuccesfullOrder', resp.data.message);
             })
             .catch(error => {

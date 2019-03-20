@@ -13,8 +13,8 @@ class OrdersController extends Controller
         return response()->json([
             "message" => "All orders'", 
             "status" => true,
-            "orders" =>  Order::all()
-        ]); 
+            "orders" =>  Order::orderBy('id', 'DESC')->get()
+        ]);  
     }
 
     public function create(Request $request) {

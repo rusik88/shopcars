@@ -10,6 +10,7 @@ import AdNew from '../components/Ads/AdNew';
 import Orders from '../components/User/Orders';
 import Login from '../components/Auth/Login';
 import Register from '../components/Auth/Register';
+import Animate from '../components/Animate/Animate';
 
 Vue.use(Router);
 
@@ -30,6 +31,12 @@ export default new Router({
             path: '/list',
             name: 'list',
             component: AdList,
+            beforeEnter: AuthGuard
+        },
+        {
+            path: '/animate',
+            name: 'animate',
+            component: Animate, 
             beforeEnter: AuthGuard
         },
         {
